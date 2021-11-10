@@ -1,0 +1,17 @@
+{
+    "python.testing.unittestEnabled": true,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./src",
+        "-p",
+        "*_test.py"
+    ],
+    "pythonTestExplorer.testFramework": "unittest",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.testing.cwd": "${workspaceFolder}",
+    "python.linting.cwd": "${workspaceFolder}",
+    "python.envFile": "${workspaceFolder}/.env",
+    "jupyter.notebookFileRoot": "${workspaceFolder}"
+}
