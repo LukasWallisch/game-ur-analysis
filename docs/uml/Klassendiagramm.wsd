@@ -1,0 +1,166 @@
+@startuml test
+package "GameUrSimulation"  {
+    skinparam groupInheritance 2
+    skinparam ClassPadding 30
+    class GameUr {
+        - GameboardSettings  GameboardSettings
+        - Player[] players
+        - Dice  dice
+        - Gameboard  Gameboard
+        - History history
+        - number round
+        + run()
+        + getHistory()
+        + string __str__()
+        - void processRound()
+        - void throwStones()
+        - Stones[] getPossibleMoves()
+        - Stone getMove()
+
+    }
+
+     class GameboardSettings {
+        ~ prepareLength
+        ~ fightLength
+        ~ retreatLength
+        ~ list fightsavefields
+        ~ list doubleThrowFields
+    }
+
+    class Player {
+        - Stone[] stones
+        - Strategy strategy
+        + Strategy getStrategy()
+        + Stone[] getStones()
+    }
+
+    interface Strategy {
+        - string name
+        + getMove()
+        + __str__()
+    }
+    class StrategyN{
+        - string name
+        + getMove()
+        + __str__()
+    }
+
+
+
+    package Gameboard <<Rectangle>> {
+        
+        
+        class Gameboard {
+            - Field[] fields
+            + moveStone()
+        }
+        class Field {
+            - Stone[] stones
+            - int position
+            - int maxStones
+            - bool playerExclusiv
+
+            + HField getHistory()
+        }
+
+            class Stone {
+        - string name
+        - number id
+        - Player owner
+        + __str__()
+        + HStone getHistory()
+    }
+
+
+
+        package GameHistory <<Rectangle>> {
+
+            class History{
+                - Round[] rounds
+                - GameboardSettings GameboardSettings
+                + newRound()
+                + saveStep()
+                + __str__()
+            }
+            class Round{
+                - Step[] steps
+                + saveStep()
+            }
+            class Step{
+                - List fields
+                - Player activePlayer
+                + saveStep()
+            }
+            class HField{
+                - Stone[] stones
+                - int position
+                + getInfo()
+            }
+            class HStone{
+                - Player player
+                - int id
+                + getInfo()
+            }
+        }
+    }
+
+    package Dice <<Rectangle>> {
+
+        interface Dice {
+            - string name
+            + number roll()
+        }
+
+
+        interface CombiDice{
+            - string name
+            - number diceCount
+            - Dice[] dice
+            + number roll()
+        }
+
+        class D2 {
+            + number roll()
+        }
+        class D4 {
+            + number roll()
+        }
+    }
+
+
+
+
+
+
+    ' GameUr::GameboardSettings "1" *-- "1" GameboardSettings
+    GameboardSettings "1" --* "1" GameUr::GameboardSettings
+    GameUr::history "1" *-- "1" History
+    GameUr::Gameboard "1" *-- "1" Gameboard
+    GameUr::dice "1" *-- "1" Dice
+    GameUr::players "1" *-- "1..2" Player : has >
+
+    Gameboard::fields "1" *-- "0..n" Field
+
+    Player::stones "1" *-- "1..7" Stone
+    Player::strategy "1" *--  "1" Strategy
+
+    History::rounds "1" *-- "0..n" Round
+    Round::steps "0..n" *-- "1" Step    
+    Step::fields "1" *-- "0..n" HField
+    HField::stones "1" *-- "0..n" HStone
+
+    Field::getHistory -- HField
+    Stone::getHistory -- HStone
+
+    Field::stone "1" *-- "0..1" Stone : is on <
+    CombiDice::dice *-- Dice
+
+    Strategy <|.. StrategyN
+
+    Dice <|-- D2
+    Dice <|-- D4
+    Dice <|-- CombiDice
+
+
+}
+@enduml
