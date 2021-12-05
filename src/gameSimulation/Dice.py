@@ -14,4 +14,10 @@ class MultiD2Dice(D2):
         self.__dicecount = dicecount
         super().__init__()
     def roll(self) -> int:
-        return sum([super().roll for _ in range(0,self.__dicecount) ])
+        d2_roll = super().roll
+        return sum([d2_roll() for _ in range(0, self.__dicecount)])
+
+
+if __name__ == "__main__":
+    d = MultiD2Dice(4)
+    print(d.roll())

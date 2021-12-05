@@ -12,6 +12,7 @@ class History(object):
         self.__rounds: List[Round] = []
         self.__currentRound = 0
         self.__rounds.append(Round(self.__currentRound))
+        self.__winner:P.Player = None
         self.saveStep(gb,-1, None)
 
     def newRound(self) -> None:
@@ -21,14 +22,22 @@ class History(object):
     def saveStep(self, gb: GB.Gameboard, diceRoll: int, activePlayer: P.Player) -> None:
         self.__rounds[self.__currentRound].saveStep(gb, diceRoll,
                                                     activePlayer)
+    def saveWinner(self, winner: P.Player) -> None:
+        self.__winner = winner
 
     def __str__(self) -> str:
-        return "{rounds}".format(
+        output = "{rounds}".format(
             rounds="\n".join([str(f) for f in self.__rounds]))
+        if self.__winner != None:
+            output += "Winner is Player {player}".format(player=self.__winner)             
+        return output
 
-    def getInfo(self):
-        return "{rounds}".format(
+    def getInfo(self)->str:
+        output = "{rounds}".format(
             rounds="\n".join([r.getInfo(len(self.__players)) for r in self.__rounds]))
+        if self.__winner != None:
+            output += "\nWinner is Player {player}".format(player=self.__winner)
+        return output
 
 
 class Round(object):

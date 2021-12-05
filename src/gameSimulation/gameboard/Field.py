@@ -57,6 +57,9 @@ class Field(object):
     def getStones(self) -> List[S.Stone]:
         return self.__stones
 
+    def getStones4Player(self,player:Player) -> List[S.Stone]:
+        return list(filter(lambda s: s.getPlayer() == player, self.__stones))
+
     def getPosition(self) -> int:
         return self.__pos
 
@@ -82,6 +85,7 @@ class Field(object):
                 players = [s.getPlayer() for s in self.__stones]
                 if players.count(player) >= self.__maxStones:
                     return False
+            # Manche Felder werden für alle Spieler betrachtet, er kann nur einen Stein darauf setzen wenn die Maximalanzahl an Steinen für das Feld noch nicht erreicht hat.
             else: 
                 if len(self.__stones) >= self.__maxStones:
                     return False
