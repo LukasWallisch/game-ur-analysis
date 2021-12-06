@@ -15,15 +15,15 @@ class Strategy(object):
     def getName(self) ->str:
         self.__name
 
-    def chooseMove(self,player:Player, moveDist:int, gb:Gameboard)->MoveTuple:
+    def chooseMove(self,player:Player, diceRoll:int, gb:Gameboard)->MoveTuple:
         raise NotImplementedError("this is just the interface")
 
 class RandomStrategy(object):
     def __init__(self) -> None:
         self.__name = "random"
         super().__init__()
-    def chooseMove(self, player: Player, moveDist: int, gb: Gameboard) -> MoveTuple:
-        possibleMoves = gb.getPossibleMoveTuples(player, moveDist)
+    def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
+        possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
             return random.choice(possibleMoves)
         else:

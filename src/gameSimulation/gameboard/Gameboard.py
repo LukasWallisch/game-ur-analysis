@@ -42,8 +42,8 @@ class Gameboard:
     def getThrowMove(self, stone:Stone, srcField:Field):
         return MoveTuple(stone,srcField, self.getStartField())
 
-    def isMovePossible(self, field: Field, player: Player, moveDist: int) -> Field | None:
-        destination_ID = self.__Fields.index(field) + moveDist
+    def isMovePossible(self, field: Field, player: Player, diceRoll: int) -> Field | None:
+        destination_ID = self.__Fields.index(field) + diceRoll
         if field == self.__Fields[-1]:
             return None
         # check if on Gameboard
@@ -59,12 +59,12 @@ class Gameboard:
             else:
                 return None
 
-    def getPossibleMoveTuples(self, player: Player, moveDist: int) -> List[MoveTuple]:
+    def getPossibleMoveTuples(self, player: Player, diceRoll: int) -> List[MoveTuple]:
         possibleMoves: List[Stone] = []
         for field in self.__Fields:
             for stone in field.getStones():
                 if stone.getPlayer() == player:
-                    destField = self.isMovePossible(field, player, moveDist)
+                    destField = self.isMovePossible(field, player, diceRoll)
                     if destField != None:
                         possibleMoves.append(
                             MoveTuple(stone, field, destField))

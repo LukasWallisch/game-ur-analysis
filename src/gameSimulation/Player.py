@@ -27,7 +27,7 @@ class Player:
         return len(self.__stones)
 
     def __str__(self) -> str:
-        return "Player {id:02d} with stones {stones}".format(id=self.__id, stones="|".join([str(x) for x in self.__stones]))
+        return "Player {id:d} with stones {stones}".format(id=self.__id, stones="|".join([str(x) for x in self.__stones]))
 
     def __repr__(self) -> str:
         return "Player: id:{id}, strategy:{strategy}, stones:{stones}".format(id=self.__id, strategy=self.__strategy, stones=",".join([str(s)for s in self.__stones]))

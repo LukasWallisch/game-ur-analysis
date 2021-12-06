@@ -17,24 +17,20 @@ class GameUr:
         # self.__round = 0
         self.__history = H.History(self.__gb, self.__gs)
 
-    def tmp(self):
-        self.__history.newRound()
-        self.doMove(self.__players[0], 4)
-        self.doMove(self.__players[1], 4)
-        self.__history.newRound()
-        self.doMove(self.__players[0], 4)
-        self.doMove(self.__players[1], 4)
-        # self.__players[0].getStones()[0].move(2)
-        # self.__history.saveStep(self.__gb,2,self.__players[0])
-        # self.__players[0].getStones()[1].move(3)
-        # self.__history.saveStep(self.__gb, 3,self.__players[0])
-
     def run(self):
         self.__history.newRound()
         gameKeepRunning = True
         while gameKeepRunning:
             gameKeepRunning = self.processRound()
         self.__history.saveWinner(self.getWinner())
+        print(self.__history.getRoundCount())
+    
+    def reset(self):
+        self.__gb = GB.Gameboard(self.__gs)
+        self.__dice = self.__gs.getDice()
+        self.__players = self.__gs.getPlayers()
+        # self.__round = 0
+        self.__history = H.History(self.__gb, self.__gs)
 
     def __str__(self):
         return "Königliches Spiel von Ur:\n{history}".format(history=self.__history.getInfo())
@@ -50,10 +46,12 @@ class GameUr:
     def processRound(self) -> bool:
         self.__history.newRound()
         for player in self.__players:
-            moveDist = self.__dice.roll()
-            self.doMove(player, moveDist)
-            if set(self.__gb.getEndField().getStones4Player(player)) == set(player.getStones()):
-                return False
+            landedOnDoubleRoll = True
+            while landedOnDoubleRoll:
+                diceRoll = self.__dice.roll()
+                landedOnDoubleRoll = self.doMove(player, diceRoll)
+                if set(self.__gb.getEndField().getStones4Player(player)) == set(player.getStones()):
+                    return False
         return True
 
     def executeMove(self, move: MoveTuple) -> List[MoveTuple]:
@@ -64,19 +62,29 @@ class GameUr:
     def getGB(self):
         return self.__gb
 
-    def doMove(self, player: Player, moveDist: int) -> List[GB.Stone]:
-        # print("doMove für Player {player}, moveDist: {moveDist}".format(player=player,moveDist=moveDist))
-        strategy = player.getStrategy()
-        move = strategy.chooseMove(player, moveDist, self.__gb)
-        if move == None:
-            print("No possible Move")
+    def doMove(self, player: Player, diceRoll: int) -> List[GB.Stone]:
+        # print("doMove für Player {player}, diceRoll: {diceRoll}".format(player=player,diceRoll=diceRoll))
+        landedOnDoubleRoll = False
+        if diceRoll == 0:
+            # print("Rolled 0")
+            moveDist = 0
         else:
-            throwMoves = self.executeMove(move)
-            for throwMove in throwMoves:
-                result = self.executeMove(throwMove)
-                if result != None:
+            strategy = player.getStrategy()
+            move = strategy.chooseMove(player, diceRoll, self.__gb)
+            if move == None:
+                # print("No possible Move")
+                moveDist = 0
+            else:
+                throwMoves = self.executeMove(move)
+                moveDist = move.destField.getPosition() - move.srcField.getPosition()
+                landedOnDoubleRoll = move.destField.getPosition() in self.__gs.getDoubleRollFields()
+                # if landedOnDoubleRoll:
+                #     print("DoubleRoll")
+                for throwMove in throwMoves:
+                    result = self.executeMove(throwMove)
+                    if result != None:
+                        raise RuntimeError(
+                            "A Throw Move can't produce a Throwmove")
 
-                    raise RuntimeError(
-                        "A Throw Move can't produce a Throwmove")
-
-        self.__history.saveStep(self.__gb, moveDist, player)
+        self.__history.saveStep(self.__gb, diceRoll, moveDist, player)
+        return landedOnDoubleRoll

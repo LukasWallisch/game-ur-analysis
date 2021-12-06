@@ -13,14 +13,14 @@ class History(object):
         self.__currentRound = 0
         self.__rounds.append(Round(self.__currentRound))
         self.__winner:P.Player = None
-        self.saveStep(gb,-1, None)
+        self.saveStep(gb,0,0, None)
 
     def newRound(self) -> None:
         self.__currentRound += 1
         self.__rounds.append(Round(self.__currentRound))
 
-    def saveStep(self, gb: GB.Gameboard, diceRoll: int, activePlayer: P.Player) -> None:
-        self.__rounds[self.__currentRound].saveStep(gb, diceRoll,
+    def saveStep(self, gb: GB.Gameboard, diceRoll: int, moveDist: int, activePlayer: P.Player) -> None:
+        self.__rounds[self.__currentRound].saveStep(gb, diceRoll, moveDist,
                                                     activePlayer)
     def saveWinner(self, winner: P.Player) -> None:
         self.__winner = winner
@@ -39,6 +39,9 @@ class History(object):
             output += "\nWinner is Player {player}".format(player=self.__winner)
         return output
 
+    def getRoundCount(self)->int:
+        return len(self.__rounds)
+
 
 class Round(object):
     def __init__(self, id: int) -> None:
@@ -46,9 +49,9 @@ class Round(object):
         self.__id = id
         self.__currentStep = 0
 
-    def saveStep(self, gb: GB.Gameboard, diceRoll: int, activePlayer: P.Player) -> None:
+    def saveStep(self, gb: GB.Gameboard, diceRoll: int, moveDist: int, activePlayer: P.Player) -> None:
         self.__steps.append(
-            Step.fromGB(gb, self.__currentStep, diceRoll, activePlayer))
+            Step.fromGB(gb, self.__currentStep, diceRoll,moveDist, activePlayer))
         self.__currentStep += 1
 
     def __str__(self) -> str:
@@ -108,20 +111,21 @@ class Field:
 
 
 class Step:
-    def __init__(self, gameboard: List[Field], stepId: int, diceRoll: int, activePlayer: P.Player) -> None:
+    def __init__(self, gameboard: List[Field], stepId: int, diceRoll: int, moveDist: int, activePlayer: P.Player) -> None:
         self.__activePlayer = activePlayer
         self.__id = stepId
         self.__diceRoll = diceRoll
+        self.__moveDist = moveDist
         self.__gameboard = gameboard
 
     @classmethod
-    def fromGB(cls, gb: GB.Gameboard, stepId: int, diceRoll: int, activePlayer: P.Player):
+    def fromGB(cls, gb: GB.Gameboard, stepId: int, diceRoll: int, moveDist: int, activePlayer: P.Player):
         fields = [Field.fromGBField(f) for f in gb.getFields()]
-        return cls(fields, stepId, diceRoll, activePlayer)
+        return cls(fields, stepId, diceRoll, moveDist, activePlayer)
 
     def getInfo(self, playerCount:int = 1) -> str:
         gameboard = "|".join([f.getInfo(playerCount) for f in self.__gameboard])
         playername = "active Player: "+self.__activePlayer.getName() if self.__activePlayer != None else "Start:"
-        output = "Step{id:02d}: {playername:<{playernameLen}}  diceroll: {diceroll:02d} gameboard:{gameboard}".format(
-            id=self.__id, playername=playername, playernameLen=c.HISTORY_PLAYERNAME_LEN, diceroll=self.__diceRoll, gameboard=gameboard)
+        output = "Step{id:02d}: {playername:<{playernameLen}}  roll: {diceroll:02d} moveDist: {moveDist:02d} gameboard:{gameboard}".format(
+            id=self.__id, playername=playername, playernameLen=c.HISTORY_PLAYERNAME_LEN, diceroll=self.__diceRoll, moveDist=self.__moveDist, gameboard=gameboard)
         return output
