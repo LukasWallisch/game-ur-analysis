@@ -17,6 +17,9 @@ class Strategy(object):
 
     def chooseMove(self,player:Player, diceRoll:int, gb:Gameboard)->MoveTuple:
         raise NotImplementedError("this is just the interface")
+    
+    def __repr__(self) -> str:
+        return self.getName()
 
 class RandomStrategy(object):
     def __init__(self) -> None:

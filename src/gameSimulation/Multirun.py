@@ -11,18 +11,16 @@ import multiprocessing as mp
 def runGameNTimes(n: int, gs: GameSettings):
     print("start method")
     g = GameUr.GameUr(gs)
-    gl = []
-    w = []
+    h = []
     print("start for")
     for _ in range(n):
         g.run()
-        gl.append(g.getGamelength())
-        w.append(g.getWinner())
+        h.append(g.getStonesHistory())
         g.reset()
-    return (gl, w)
+    return h
 
 
-def multirun(n:int,gs:GameSettings):
+def multirun(n: int, gs: GameSettings):
     PROCESSES = mp.cpu_count()-2
     gamePerCpu = n//PROCESSES+1
 
@@ -31,12 +29,11 @@ def multirun(n:int,gs:GameSettings):
     print(gamePerCpu*PROCESSES)
     with mp.Pool(PROCESSES) as pool:
         print("start pool")
-        results = pool.starmap(runGameNTimes, [(gamePerCpu,copy.deepcopy(gs))]*PROCESSES)
+        results = pool.starmap(
+            runGameNTimes, [(gamePerCpu, copy.deepcopy(gs))]*PROCESSES)
         print("finish pool")
 
-    gl =  []
-    w = []
-    for gl_sub, w_sub in results:
-        gl.extend(gl_sub)
-        w.extend(w_sub)
-    return (gl,w)
+    h = []
+    for h_sub in results:
+        h.extend(h_sub)
+    return h

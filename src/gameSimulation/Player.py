@@ -1,6 +1,7 @@
 
 from typing import List
 import src.gameSimulation.gameboard as GB
+import src.gameSimulation.constants as c
 
 import src.gameSimulation.Strategies as _Strategy
 
@@ -12,7 +13,7 @@ class Player:
         self.__strategy = strategy
 
     def getName(self) -> str:
-        return "p{id:02d}".format(id=self.__id)
+        return "{abbr}{id:0{idLen}d}".format(id=self.__id, abbr=c.PLAYER_ABBR, idLen=c.PLAYER_ID_LEN)
 
     def getID(self) -> int:
         return self.__id

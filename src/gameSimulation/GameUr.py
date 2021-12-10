@@ -33,6 +33,12 @@ class GameUr:
 
     def getGamelength(self):
         return self.__history.getRoundCount()
+    
+    def getStonesHistory(self):
+        w = self.getWinner()
+        gl = self.getGamelength()
+        sp = self.__history.getStonePositions()
+        return {"winner":w,"gameLength":gl,"history":sp}
 
     def __str__(self):
         return "Königliches Spiel von Ur:\n{history}".format(history=self.__history.getInfo())
@@ -44,6 +50,10 @@ class GameUr:
         for player in self.__players:
             if set(self.__gb.getEndField().getStones4Player(player)) == set(player.getStones()):
                 return player
+
+    def getGB(self):
+        return self.__gb
+
 
     def processRound(self) -> bool:
         self.__history.newRound()
@@ -61,9 +71,7 @@ class GameUr:
         throwMoves = move.destField.addStone(move.stone)
         return throwMoves
 
-    def getGB(self):
-        return self.__gb
-
+    
     def doMove(self, player: Player, diceRoll: int) -> List[GB.Stone]:
         # print("doMove für Player {player}, diceRoll: {diceRoll}".format(player=player,diceRoll=diceRoll))
         landedOnDoubleRoll = False

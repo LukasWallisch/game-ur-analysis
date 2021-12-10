@@ -6,14 +6,14 @@ import src.gameSimulation.Player as P
 
 
 class History(object):
-    def __init__(self, gb:GB.Gameboard, gs: GS.GameSettings ) -> None:
+    def __init__(self, gb: GB.Gameboard, gs: GS.GameSettings) -> None:
         self.__gbs = gs
         self.__players = gs.getPlayers()
         self.__rounds: List[Round] = []
         self.__currentRound = 0
         self.__rounds.append(Round(self.__currentRound))
-        self.__winner:P.Player = None
-        self.saveStep(gb,0,0, None)
+        self.__winner: P.Player = None
+        self.saveStep(gb, 0, 0, None)
 
     def newRound(self) -> None:
         self.__currentRound += 1
@@ -22,6 +22,7 @@ class History(object):
     def saveStep(self, gb: GB.Gameboard, diceRoll: int, moveDist: int, activePlayer: P.Player) -> None:
         self.__rounds[self.__currentRound].saveStep(gb, diceRoll, moveDist,
                                                     activePlayer)
+
     def saveWinner(self, winner: P.Player) -> None:
         self.__winner = winner
 
@@ -29,17 +30,43 @@ class History(object):
         output = "{rounds}".format(
             rounds="\n".join([str(f) for f in self.__rounds]))
         if self.__winner != None:
-            output += "Winner is Player {player}".format(player=self.__winner)             
+            output += "Winner is Player {player}".format(player=self.__winner)
         return output
 
-    def getInfo(self)->str:
+    def getInfo(self) -> str:
         output = "{rounds}".format(
             rounds="\n".join([r.getInfo(len(self.__players)) for r in self.__rounds]))
         if self.__winner != None:
-            output += "\nWinner is Player {player}".format(player=self.__winner)
+            output += "\nWinner is Player {player}".format(
+                player=self.__winner)
         return output
 
-    def getRoundCount(self)->int:
+    def getStonePositions(self) -> dir:
+        stonePositions = {"stones":{}}
+        for p in self.__players:
+            for s in p.getStones():
+                stonePositions["stones"].update({s.getName(): []})
+        stonePositions.update({"activePlayer": []})
+        stonePositions.update({"diceRoll": []})
+        stonePositions.update({"moveDist": []})
+        stonePositions.update({"newRound": []})
+
+        for r in self.__rounds:
+            newRound = True
+            for s in r.getSteps():
+                player = s.getActivePlayer().getName() if s.getActivePlayer() != None else None
+                stonePositions["activePlayer"].append(player)
+                stonePositions["diceRoll"].append(s.getDiceRoll())
+                stonePositions["moveDist"].append(s.getMoveDist())
+                stonePositions["newRound"].append(newRound)
+                newRound = False
+                for f in s.getFields():
+                    for st in f.getStones():
+                        stonePositions["stones"][st.getName()].append(
+                            f.getPos())
+        return stonePositions
+
+    def getRoundCount(self) -> int:
         return len(self.__rounds)
 
 
@@ -51,8 +78,11 @@ class Round(object):
 
     def saveStep(self, gb: GB.Gameboard, diceRoll: int, moveDist: int, activePlayer: P.Player) -> None:
         self.__steps.append(
-            Step.fromGB(gb, self.__currentStep, diceRoll,moveDist, activePlayer))
+            Step.fromGB(gb, self.__currentStep, diceRoll, moveDist, activePlayer))
         self.__currentStep += 1
+
+    def getSteps(self):
+        return self.__steps
 
     def __str__(self) -> str:
         output = "Round{id:03d}: steps:\n{steps}".format(
@@ -69,6 +99,8 @@ class Stone(object):
     def __init__(self, player: P.Player, id: int) -> None:
         self.__player = player
         self.__id = id
+        self.__name = "p{playerid}s{stoneid}".format(
+            playerid=player.getID(), stoneid=id)
 
     @classmethod
     def fromGBStone(cls, stone: GB.Stone):
@@ -80,15 +112,18 @@ class Stone(object):
             stoneAbbr=c.STONE_ABBR, stoneid=self.__id, stoneIdLen=c.STONE_ID_LEN)
         return output
 
+    def getName(self) -> str:
+        return self.__name
+
     def __str__(self) -> str:
-        return "p{playerid}s{stoneid}".format(playerid=self.__player.getID(), stoneid=self.__id)
+        return self.__name
 
     def __repr__(self) -> str:
         return "H.Stone:" + str(self)
 
 
 class Field:
-    def __init__(self, stones: List[Stone], position: int, maxStones: int, playerExclusiv:bool) -> None:
+    def __init__(self, stones: List[Stone], position: int, maxStones: int, playerExclusiv: bool) -> None:
         self.__maxStones = maxStones
         self.__stones = stones
         self.__pos = position
@@ -107,7 +142,11 @@ class Field:
             result=result, resultLen=resultLen)
         return output
 
-    
+    def getStones(self):
+        return self.__stones
+
+    def getPos(self):
+        return self.__pos
 
 
 class Step:
@@ -123,9 +162,23 @@ class Step:
         fields = [Field.fromGBField(f) for f in gb.getFields()]
         return cls(fields, stepId, diceRoll, moveDist, activePlayer)
 
-    def getInfo(self, playerCount:int = 1) -> str:
-        gameboard = "|".join([f.getInfo(playerCount) for f in self.__gameboard])
-        playername = "active Player: "+self.__activePlayer.getName() if self.__activePlayer != None else "Start:"
+    def getInfo(self, playerCount: int = 1) -> str:
+        gameboard = "|".join([f.getInfo(playerCount)
+                             for f in self.__gameboard])
+        playername = "active Player: " + \
+            self.__activePlayer.getName() if self.__activePlayer != None else "Start:"
         output = "Step{id:02d}: {playername:<{playernameLen}}  roll: {diceroll:02d} moveDist: {moveDist:02d} gameboard:{gameboard}".format(
             id=self.__id, playername=playername, playernameLen=c.HISTORY_PLAYERNAME_LEN, diceroll=self.__diceRoll, moveDist=self.__moveDist, gameboard=gameboard)
         return output
+
+    def getActivePlayer(self) -> P.Player:
+        return self.__activePlayer
+
+    def getDiceRoll(self) -> int:
+        return self.__diceRoll
+
+    def getMoveDist(self) -> int:
+        return self.__moveDist
+
+    def getFields(self) -> List[Field]:
+        return self.__gameboard
