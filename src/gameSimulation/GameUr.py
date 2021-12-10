@@ -23,7 +23,6 @@ class GameUr:
         while gameKeepRunning:
             gameKeepRunning = self.processRound()
         self.__history.saveWinner(self.getWinner())
-        print(self.__history.getRoundCount())
     
     def reset(self):
         self.__gb = GB.Gameboard(self.__gs)
@@ -31,6 +30,9 @@ class GameUr:
         self.__players = self.__gs.getPlayers()
         # self.__round = 0
         self.__history = H.History(self.__gb, self.__gs)
+
+    def getGamelength(self):
+        return self.__history.getRoundCount()
 
     def __str__(self):
         return "Königliches Spiel von Ur:\n{history}".format(history=self.__history.getInfo())

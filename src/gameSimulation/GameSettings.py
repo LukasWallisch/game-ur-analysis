@@ -16,6 +16,18 @@ class GameSettings:
                  noThrow: bool = False,
                  exactFinish:bool = True
                  ) -> None:
+        """ players: List[P.Player],
+                 dice: D.Dice,
+                 prepareLength: int,
+                 fightLength: int,
+                 retreatLength: int,
+                 fightSaveFields: List[int],
+                 doubleRollFields: List[int],
+                 noThrow: bool = False,
+                 exactFinish:bool = True
+        Returns:
+            int: [description]
+        """
         self.__players = players
         self.__dice = dice
         self.__prepareLength = prepareLength
@@ -25,6 +37,7 @@ class GameSettings:
         self.__doubleRollFields = doubleRollFields
         self.__noThrow = noThrow
         self.__exactFinish = exactFinish
+
 
     def getGamelength(self) -> int:
         """Summe aus prepare, fight und retreat plus zusätzlich zwei Felder für Start und Ende
