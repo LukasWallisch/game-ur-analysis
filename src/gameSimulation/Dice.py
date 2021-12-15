@@ -7,6 +7,9 @@ class Dice(object):
 class D2(Dice):
     def roll(self):
         return random.choice([1,0])
+class D6(Dice):
+    def roll(self):
+        return random.choice([1,2,3,4,5,6])
 
 
 class MultiD2Dice(D2):
@@ -18,6 +21,9 @@ class MultiD2Dice(D2):
         return sum([d2_roll() for _ in range(0, self.__dicecount)])
 
 
+class FunkyD2(Dice):
+    def roll(self):
+        return random.choice([3, 4])
 if __name__ == "__main__":
     d = MultiD2Dice(4)
     print(d.roll())

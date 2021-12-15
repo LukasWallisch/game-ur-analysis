@@ -58,7 +58,7 @@ class GameSettings:
         else:
             maxStones = 1
             exclusiv = False
-        isSave = position in self.__fightSaveFields
+        isSave = position in self.__fightSaveFields or position == 0 or position == self.getGamelength()-1
         doubleRoll = position in self.__doubleRollFields
 
         return (maxStones, exclusiv, isSave, doubleRoll)

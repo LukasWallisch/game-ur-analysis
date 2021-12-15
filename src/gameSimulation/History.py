@@ -41,19 +41,33 @@ class History(object):
                 player=self.__winner)
         return output
 
+    def printLastStep(self) ->None:
+        print(self.__rounds[-1].getSteps()[-1].getInfo(len(self.__players)))
+
     def getStonePositions(self) -> dir:
         stonePositions = {"stones":{}}
         for p in self.__players:
+            stonePositions["stones"].update({p.getName(): {}})
             for s in p.getStones():
-                stonePositions["stones"].update({s.getName(): []})
+                stonePositions["stones"][p.getName()].update({s.getName(): []})
+        stonePositions.update({"globalStepID": []})
+        stonePositions.update({"roundID": []})
         stonePositions.update({"activePlayer": []})
         stonePositions.update({"diceRoll": []})
         stonePositions.update({"moveDist": []})
         stonePositions.update({"newRound": []})
 
+        roundID = -1
+        globalStepID=0
         for r in self.__rounds:
             newRound = True
+            roundID += 1
             for s in r.getSteps():
+                
+                stonePositions["roundID"].append(roundID)
+                stonePositions["globalStepID"].append(globalStepID)
+                globalStepID += 1
+
                 player = s.getActivePlayer().getName() if s.getActivePlayer() != None else None
                 stonePositions["activePlayer"].append(player)
                 stonePositions["diceRoll"].append(s.getDiceRoll())
@@ -62,7 +76,7 @@ class History(object):
                 newRound = False
                 for f in s.getFields():
                     for st in f.getStones():
-                        stonePositions["stones"][st.getName()].append(
+                        stonePositions["stones"][st.getPlayer().getName()][st.getName()].append(
                             f.getPos())
         return stonePositions
 
@@ -114,6 +128,9 @@ class Stone(object):
 
     def getName(self) -> str:
         return self.__name
+
+    def getPlayer(self) -> P.Player:
+        return self.__player
 
     def __str__(self) -> str:
         return self.__name

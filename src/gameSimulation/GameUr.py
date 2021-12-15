@@ -6,6 +6,7 @@ from src.gameSimulation.GameSettings import GameSettings
 from src.gameSimulation.Player import Player
 
 from src.gameSimulation.gameboard.Gameboard import MoveTuple
+from src.gameSimulation.gameboard.Stone import Stone
 
 
 class GameUr:
@@ -18,7 +19,6 @@ class GameUr:
         self.__history = H.History(self.__gb, self.__gs)
 
     def run(self):
-        self.__history.newRound()
         gameKeepRunning = True
         while gameKeepRunning:
             gameKeepRunning = self.processRound()
@@ -68,8 +68,12 @@ class GameUr:
 
     def executeMove(self, move: MoveTuple) -> List[MoveTuple]:
         move.srcField.removeStone(move.stone)
-        throwMoves = move.destField.addStone(move.stone)
-        return throwMoves
+        thrownStones = move.destField.addStone(move.stone)
+        return thrownStones
+    
+    def executeThrowMove(self, stone: Stone) -> List[MoveTuple]:
+        thrownStones = self.__gb.getStartField().addStone(stone)
+        return thrownStones
 
     
     def doMove(self, player: Player, diceRoll: int) -> List[GB.Stone]:
@@ -85,16 +89,17 @@ class GameUr:
                 # print("No possible Move")
                 moveDist = 0
             else:
-                throwMoves = self.executeMove(move)
+                thrownStones = self.executeMove(move)
                 moveDist = move.destField.getPosition() - move.srcField.getPosition()
                 landedOnDoubleRoll = move.destField.getPosition() in self.__gs.getDoubleRollFields()
                 # if landedOnDoubleRoll:
                 #     print("DoubleRoll")
-                for throwMove in throwMoves:
-                    result = self.executeMove(throwMove)
-                    if result != None:
+                for thrownStone in thrownStones:
+                    result = self.executeThrowMove(thrownStone)
+                    if result != []:
                         raise RuntimeError(
                             "A Throw Move can't produce a Throwmove")
 
         self.__history.saveStep(self.__gb, diceRoll, moveDist, player)
+        # self.__history.printLastStep()
         return landedOnDoubleRoll

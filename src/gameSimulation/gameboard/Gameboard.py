@@ -44,9 +44,10 @@ class Gameboard:
 
     def isMovePossible(self, field: Field, player: Player, diceRoll: int) -> Field | None:
         destination_ID = self.__Fields.index(field) + diceRoll
+        # Stone on Finish cant move
         if field == self.__Fields[-1]:
             return None
-        # check if on Gameboard
+        # if no exat finish can overroll
         if destination_ID >= len(self.__Fields):
             if self.__gs.getExactFinish():
                 return None

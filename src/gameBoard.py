@@ -25,7 +25,7 @@ def getGameboard(prepare:int,danger:int,aftermath:int, xoff=0, show_label=False)
     patches = []
 
     for x in range(2):
-        xy = grid[0]+[x,.5]-[xoff,.5]
+        xy = grid[0]+[x,.5]-[xoff,-.5]
         circle = mpatches.Circle(xy, 0.49, lw=3)
         patches.append(circle)
         if show_label:
@@ -33,14 +33,14 @@ def getGameboard(prepare:int,danger:int,aftermath:int, xoff=0, show_label=False)
 
     for y in range(prepare):
         for x in range(2):
-            xy = grid[y+startoff]-[.5-x,0]-[xoff,.5]
+            xy = grid[y+startoff]-[.5-x,0]-[xoff,-.5]
             rect = mpatches.Rectangle(xy , 1, 1)
             patches.append(rect)
             if show_label:
                 labelR(xy)
 
     for y in range(danger):
-        xy = grid[y+startoff+prepare]-[xoff,.5]
+        xy = grid[y+startoff+prepare]-[xoff,-.5]
         rect = mpatches.Rectangle(xy , 1, 1)
         patches.append(rect)
         if show_label:
@@ -48,14 +48,14 @@ def getGameboard(prepare:int,danger:int,aftermath:int, xoff=0, show_label=False)
 
     for y in range(aftermath):
         for x in range(2):
-            xy = grid[y+startoff+prepare+danger]-[.5-x,0]-[xoff,.5]
+            xy = grid[y+startoff+prepare+danger]-[.5-x,0]-[xoff,-.5]
             rect = mpatches.Rectangle(xy , 1, 1)
             patches.append(rect)
             if show_label:
                 labelR(xy)
 
     for x in range(2):
-        xy = grid[startoff+prepare+danger+aftermath]+[x,.5]-[xoff,.5]
+        xy = grid[startoff+prepare+danger+aftermath]+[x,.5]-[xoff,-.5]
         circle = mpatches.Circle(xy, 0.49)
         patches.append(circle)
         circle = mpatches.Circle(xy, 0.45)

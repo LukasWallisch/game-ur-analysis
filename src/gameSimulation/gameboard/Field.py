@@ -32,7 +32,16 @@ class Field(object):
         self.__stones: List[S.Stone] = []
 
     def addStone(self, stone: S.Stone) -> List[GB.MoveTuple]:
-        throwMoves: List[GB.MoveTuple] = []
+        thrownStones: List[S.Stone] = []
+        if not self.__isSave:
+            for oldStone in self.__stones:
+                if oldStone.getPlayer() != stone.getPlayer() and not self.__playerExclusiv:
+                    thrownStones.append(oldStone)
+        
+        for ts in thrownStones:
+            self.__stones.remove(ts)
+
+        
         if self.__playerExclusiv:
             if [s.getPlayer() for s in self.__stones].count(stone.getPlayer()) >= self.__maxStones:
                 raise FieldFullError(self.__pos,
@@ -44,12 +53,7 @@ class Field(object):
                 raise FieldFullError(self.__pos, len(self.__stones),self.__maxStones)
 
         self.__stones.append(stone)
-
-        if not self.__isSave:
-            for oldStone in self.__stones:
-                if oldStone.getPlayer() != stone.getPlayer() and not self.__playerExclusiv:
-                    throwMoves.append(self.__gb.getThrowMove(oldStone, self))
-        return throwMoves
+        return thrownStones
 
     def removeStone(self, stone: S.Stone):
         self.__stones.remove(stone)
@@ -78,17 +82,19 @@ class Field(object):
     def playerCanPlaceStone(self, player: Player) -> bool:
         if len(self.__stones) > 0:
             # Wenn auf einem SaveField schon ein Stein liegt kann kein anderer Stein darauf ziehen.
+            players = [s.getPlayer() for s in self.__stones]
             if self.__isSave:
                 return False
             # Manche Felder werden für jeden Spieler einzeln betrachtet, er kann nur einen Stein darauf setzen wenn er seien Maximalanzahl an Steinen für das Feld noch nicht erreicht hat.
             elif self.__playerExclusiv:
-                players = [s.getPlayer() for s in self.__stones]
                 if players.count(player) >= self.__maxStones:
                     return False
             # Manche Felder werden für alle Spieler betrachtet, er kann nur einen Stein darauf setzen wenn die Maximalanzahl an Steinen für das Feld noch nicht erreicht hat.
-            else: 
-                if len(self.__stones) >= self.__maxStones:
-                    return False
+            else:
+                # Der Spieler kann sich nicht sebst werfen
+                if player in players:
+                    if players.count(player) >= self.__maxStones:
+                        return False
         return True
 
     def __str__(self) -> str:
