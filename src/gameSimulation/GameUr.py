@@ -18,9 +18,11 @@ class GameUr:
         # self.__round = 0
         self.__history = H.History(self.__gb, self.__gs)
 
-    def run(self):
+    def run(self, maxRounds:int=0):
         gameKeepRunning = True
-        while gameKeepRunning:
+        currentRound=0
+        while gameKeepRunning and (maxRounds != 0 and currentRound <= maxRounds):
+            currentRound+=1
             gameKeepRunning = self.processRound()
         self.__history.saveWinner(self.getWinner())
     
@@ -38,7 +40,7 @@ class GameUr:
         w = self.getWinner()
         gl = self.getGamelength()
         sp = self.__history.getStonePositions()
-        return {"winner":w,"gameLength":gl,"history":sp}
+        return {"winner":w,"gameLength":gl,"history":sp,"players":self.__players,"dice":self.__dice,"gameSettings":self.__gs}
 
     def __str__(self):
         return "Königliches Spiel von Ur:\n{history}".format(history=self.__history.getInfo())

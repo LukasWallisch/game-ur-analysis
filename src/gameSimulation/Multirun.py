@@ -14,7 +14,7 @@ def runGameNTimes(n: int, gs: GameSettings):
     h = []
     print("start for")
     for _ in range(n):
-        g.run()
+        g.run(1000)
         h.append(g.getStonesHistory())
         g.reset()
     return h

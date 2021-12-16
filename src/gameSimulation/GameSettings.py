@@ -48,6 +48,12 @@ class GameSettings:
 
         return self.__prepareLength+self.__fightLength+self.__retreatLength+2
 
+    def getFieldsSettings(self) :
+        return{"prepareLength":self.__prepareLength,
+        "fightLength":self.__fightLength,
+        "retreatLength":self.__retreatLength,
+        "fightSaveFields":self.__fightSaveFields,
+        "doubleRollFields":self.__doubleRollFields}
     def getFieldSettings(self, position:int) -> Tuple[int,bool]:
         if position == 0 or position == self.getGamelength()-1:
             maxStones = max([len(p.getStones()) for p in self.__players])

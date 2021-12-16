@@ -31,17 +31,22 @@ class Field(object):
         self.__gb = gb
         self.__stones: List[S.Stone] = []
 
+        # print("Setup Field at Pos:{pos} with maxStones:{maxStones}, playerExclusiv: {playerExclusiv}, isSave: {isSave}, doubleRoll: {doubleRoll}".format(pos=self.__pos,
+        #                                                                                                                                                  maxStones=self.__maxStones,
+        #                                                                                                                                                  playerExclusiv=self.__playerExclusiv,
+        #                                                                                                                                                  isSave=self.__isSave,
+        #                                                                                                                                                  doubleRoll=self.__doubleRoll))
+
     def addStone(self, stone: S.Stone) -> List[GB.MoveTuple]:
         thrownStones: List[S.Stone] = []
         if not self.__isSave:
             for oldStone in self.__stones:
                 if oldStone.getPlayer() != stone.getPlayer() and not self.__playerExclusiv:
                     thrownStones.append(oldStone)
-        
+
         for ts in thrownStones:
             self.__stones.remove(ts)
 
-        
         if self.__playerExclusiv:
             if [s.getPlayer() for s in self.__stones].count(stone.getPlayer()) >= self.__maxStones:
                 raise FieldFullError(self.__pos,
@@ -50,7 +55,8 @@ class Field(object):
                                      self.__maxStones)
         else:
             if len(self.__stones) >= self.__maxStones:
-                raise FieldFullError(self.__pos, len(self.__stones),self.__maxStones)
+                raise FieldFullError(self.__pos, len(
+                    self.__stones), self.__maxStones)
 
         self.__stones.append(stone)
         return thrownStones
@@ -61,7 +67,7 @@ class Field(object):
     def getStones(self) -> List[S.Stone]:
         return self.__stones
 
-    def getStones4Player(self,player:Player) -> List[S.Stone]:
+    def getStones4Player(self, player: Player) -> List[S.Stone]:
         return list(filter(lambda s: s.getPlayer() == player, self.__stones))
 
     def getPosition(self) -> int:
@@ -81,17 +87,17 @@ class Field(object):
 
     def playerCanPlaceStone(self, player: Player) -> bool:
         if len(self.__stones) > 0:
-            # Wenn auf einem SaveField schon ein Stein liegt kann kein anderer Stein darauf ziehen.
             players = [s.getPlayer() for s in self.__stones]
-            if self.__isSave:
-                return False
             # Manche Felder werden für jeden Spieler einzeln betrachtet, er kann nur einen Stein darauf setzen wenn er seien Maximalanzahl an Steinen für das Feld noch nicht erreicht hat.
-            elif self.__playerExclusiv:
+            if self.__playerExclusiv:
                 if players.count(player) >= self.__maxStones:
                     return False
             # Manche Felder werden für alle Spieler betrachtet, er kann nur einen Stein darauf setzen wenn die Maximalanzahl an Steinen für das Feld noch nicht erreicht hat.
             else:
-                # Der Spieler kann sich nicht sebst werfen
+                # Wenn auf einem SaveField schon ein Stein liegt kann kein anderer Stein darauf ziehen.
+                if self.__isSave:
+                    return False
+            # Der Spieler kann sich nicht sebst werfen
                 if player in players:
                     if players.count(player) >= self.__maxStones:
                         return False

@@ -10,6 +10,9 @@ class D2(Dice):
 class D6(Dice):
     def roll(self):
         return random.choice([1,2,3,4,5,6])
+class D4(Dice):
+    def roll(self):
+        return random.choice([1,2,3,4])
 
 
 class MultiD2Dice(D2):
