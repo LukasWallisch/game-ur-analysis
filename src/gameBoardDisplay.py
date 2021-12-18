@@ -63,7 +63,10 @@ def makeGameboardDisplay(ax: maxes.Axes,
                  fightLength: int,
                  retreatLength: int,
                  fightSaveFields: List[int],
-                 doubleRollFields: List[int], xoff=0, show_label=False) -> None:
+                 doubleRollFields: List[int],
+                 xoff=0,
+                 show_label=False,
+                 singleRow = True) -> None:
     __setHspans(ax, fightSaveFields,doubleRollFields)
     gl = prepareLength+fightLength+retreatLength+2
     # create 3xgamelen grid to plot the artists
@@ -72,8 +75,14 @@ def makeGameboardDisplay(ax: maxes.Axes,
 
     patches = []
     fc = []
-    for x in range(2):
-        xy = grid[0]+[x, 0]-[xoff, 0]
+    if singleRow:
+        offset = [.5,0]
+        rangeEnd = 1
+    else:
+        offset = [0,0]
+        rangeEnd = 2
+    for x in range(rangeEnd):
+        xy = grid[0]+[x, 0]-[xoff, 0]+offset
 
         ellipse = mpatches.Ellipse(xy, 1, 1, fill=None)
         ellipse2 = mpatches.Ellipse(xy, .8, .8, fill=None)
@@ -84,9 +93,20 @@ def makeGameboardDisplay(ax: maxes.Axes,
 
     for y in range(gl):
         if y in range(prepareLength) or y in np.array(range(retreatLength))+prepareLength+fightLength:
-            for x in range(2):
-                xy = grid[y]-[.5-x, 0]-[xoff, -.5]
-                rect = mpatches.Rectangle(xy, 1, 1, fill=None)
+            if singleRow:
+                offset = [.5, 0]
+                rangeEnd = 1
+            else:
+                offset = [0, 0]
+                rangeEnd = 2
+            for x in range(rangeEnd):
+                xy = grid[y]-[.5-x, 0]-[xoff, -.5]+offset
+                if y in range(prepareLength):
+                    fc = "green"
+                else:
+                    fc = "blue"
+                rect = mpatches.Rectangle(
+                    xy, 1, 1, ec="black", fc=fc, alpha=.3)
                 patches.append(rect)
                 if show_label:
                     labelR(xy)
@@ -98,7 +118,7 @@ def makeGameboardDisplay(ax: maxes.Axes,
                             labelC(xy-[1, -.5], "doubleRoll")
         if y in np.array(range(fightLength))+prepareLength:
             xy = grid[y]-[xoff, -.5]
-            rect = mpatches.Rectangle(xy, 1, 1, fill=None)
+            rect = mpatches.Rectangle(xy, 1, 1, ec = "black", fc="red", alpha=.3)
             patches.append(rect)
             if show_label:
                 labelR(xy)
@@ -119,8 +139,14 @@ def makeGameboardDisplay(ax: maxes.Axes,
     #         if show_label:
     #             labelR(xy)
 
-    for x in range(2):
-        xy = grid[-1]+[x, 0]-[xoff, 0]
+    if singleRow:
+        offset = [.5, 0]
+        rangeEnd = 1
+    else:
+        offset = [0, 0]
+        rangeEnd = 2
+    for x in range(rangeEnd):
+        xy = grid[-1]+[x, 0]-[xoff, 0]+offset
         ellipse = mpatches.Ellipse(xy, 1, 1, lw=3, fill=None)
         patches.append(ellipse)
         if show_label:
