@@ -15,6 +15,36 @@ def labelR(xy):
     plt.text(xy[0],xy[1], text, ha="center", family='sans-serif', size=10)
 
 
+def starpatches(coords):
+    xy = np.array((0.5, 0.5))+coords
+    patches = []
+    offset = np.array((.1, .1))
+    fco = "orange"
+    fcb = "blue"
+
+    patches = []
+
+
+    for direction in range(0, 4):
+        coordSign = (-1 if direction in (0, 1) else 1, 1)
+        coordVal = (1 if direction in (0, 3) else 2.5,
+                    1 if direction in (1, 2) else 2.5)
+        color = fcb if direction in [0, 2] else fco
+
+        for mirror in [1,-1]:
+            pos = offset * (1, 1) * coordSign * coordVal * mirror
+            ellipse = mpatches.Ellipse(xy+ pos ,
+                                    0.15, .35, 22.5+45*direction, ec="black", lw=1, alpha=0.5, fc=color)
+            patches.append(ellipse)
+        
+
+    ellipse = mpatches.Ellipse(xy, 0.2, .2, fc=fco, ec="black", lw=1,)
+    patches.append(ellipse)
+
+    return patches
+
+
+
 def getGameboard(prepareLength: int,
                  fightLength: int,
                  retreatLength: int,
@@ -46,24 +76,25 @@ def getGameboard(prepareLength: int,
                 if show_label:
                     labelR(xy)
 
-                if y in doubleRollFields:
-                    print("doubleroll!")
-                    rect = mpatches.Rectangle(
-                        xy, 1, 1, linewidth=0, facecolor='green', hatch='///')
-                    patches.append(rect)
+                if y in np.array(doubleRollFields)-1:
+                    # rect = mpatches.Rectangle(
+                    #     xy, 1, 1, edgecolor="black", facecolor='grey', hatch='///')
+                    # patches.append(rect)
+                    patches.extend(starpatches(xy))
         if y in np.array(range(fightLength))+prepareLength:
             xy = grid[y]-[xoff,-.5]
             rect = mpatches.Rectangle(xy, 1, 1,fill=None)
             patches.append(rect)
-            if y in doubleRollFields:
-                rect = mpatches.Rectangle(
-                    xy, 1, 1, linewidth=0, facecolor='green', hatch='///')
-                patches.append(rect)
             if show_label:
                 labelR(xy)
-            if y in fightSaveFields:
-                rect = mpatches.RegularPolygon(xy+[.5, -.5], 4, .5, fill=None)
-                patches.append(rect)
+            if y in np.array(doubleRollFields)-1:
+                # rect = mpatches.Rectangle(
+                #     xy, 1, 1, edgecolor ="black", facecolor='grey', hatch='///')
+                # patches.append(rect)
+                patches.extend(starpatches(xy))
+
+            if y in np.array(fightSaveFields)-1:
+                patches.extend(starpatches(xy))
                 if show_label:
                     labelR(xy)
 
