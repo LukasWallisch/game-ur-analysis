@@ -14,7 +14,7 @@ class Strategy(object):
         super().__init__()
 
     def getName(self) ->str:
-        self.__name
+        return self.__name
 
     def chooseMove(self,player:Player, diceRoll:int, gb:Gameboard)->MoveTuple:
         raise NotImplementedError("this is just the interface")
@@ -22,10 +22,14 @@ class Strategy(object):
     def __repr__(self) -> str:
         return self.getName()
 
-class RandomStrategy(object):
+
+class RandomStrategy(Strategy):
     def __init__(self) -> None:
         self.__name = "random"
         super().__init__()
+
+    def getName(self) -> str:
+        return self.__name
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
@@ -33,10 +37,14 @@ class RandomStrategy(object):
         else:
             return None
     
-class MoveFirstStrategy(object):
+
+class MoveFirstStrategy(Strategy):
     def __init__(self) -> None:
-        self.__name = "random"
+        self.__name = "MoveFirst"
         super().__init__()
+
+    def getName(self) -> str:
+        return self.__name
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
@@ -44,10 +52,15 @@ class MoveFirstStrategy(object):
             return possibleMoves[srcFieldsPos.index(np.max(srcFieldsPos))]
         else:
             return None
-class MoveLastStrategy(object):
+
+
+class MoveLastStrategy(Strategy):
     def __init__(self) -> None:
-        self.__name = "random"
+        self.__name = "MoveLast"
         super().__init__()
+
+    def getName(self) -> str:
+        return self.__name
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:

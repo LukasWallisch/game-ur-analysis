@@ -2,6 +2,7 @@ from typing import List, Tuple
 
 import src.gameSimulation.Player as P
 import src.gameSimulation.Dice as D
+from src.gameSimulation.Strategies import Strategy
 
 
 class GameSettings:
@@ -72,6 +73,9 @@ class GameSettings:
         
     def getPlayers(self) -> List[P.Player]:
         return self.__players
+    
+    def getStrategies(self) -> List[Strategy]:
+        return [p.getStrategy() for p in self.__players]
 
     def getDice(self) -> D.Dice:
         return self.__dice
