@@ -48,10 +48,12 @@ class GameUr:
     def __repr__(self) -> str:
         return self.__str__()
 
-    def getWinner(self) -> Player:
+    def getWinner(self) -> List[Player]:
+        winner=[]
         for player in self.__players:
             if set(self.__gb.getEndField().getStones4Player(player)) == set(player.getStones()):
-                return player
+                winner.append(player)
+        return winner
 
     def getGB(self):
         return self.__gb

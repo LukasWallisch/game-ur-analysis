@@ -1,5 +1,7 @@
 from typing import List, Tuple
 
+import numpy as np
+
 import src.gameSimulation.Player as P
 import src.gameSimulation.Dice as D
 from src.gameSimulation.Strategies import Strategy
@@ -59,13 +61,15 @@ class GameSettings:
         if position == 0 or position == self.getGamelength()-1:
             maxStones = max([len(p.getStones()) for p in self.__players])
             exclusiv = True
-        elif position in range(1, self.__prepareLength) or position in [i+self.__prepareLength+self.__fightLength+1 for i in range(0, self.__retreatLength)]:
+            isSave = True
+        elif position in np.array(range(0, self.__prepareLength))+1 or position in np.array(range(0, self.__retreatLength))+1+self.__prepareLength+self.__fightLength:
             maxStones = 1
             exclusiv = True
+            isSave = True
         else:
             maxStones = 1
             exclusiv = False
-        isSave = position in self.__fightSaveFields or position == 0 or position == self.getGamelength()-1
+            isSave = False
         doubleRoll = position in self.__doubleRollFields
 
         return (maxStones, exclusiv, isSave, doubleRoll)

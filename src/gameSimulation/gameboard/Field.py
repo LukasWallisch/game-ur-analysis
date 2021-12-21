@@ -31,7 +31,7 @@ class Field(object):
         self.__gb = gb
         self.__stones: List[S.Stone] = []
 
-        # print("Setup Field at Pos:{pos} with maxStones:{maxStones}, playerExclusiv: {playerExclusiv}, isSave: {isSave}, doubleRoll: {doubleRoll}".format(pos=self.__pos,
+        # print("Setup Field at Pos:{pos:02d} with maxStones:{maxStones}, playerExclusiv: {playerExclusiv}, isSave: {isSave}, doubleRoll: {doubleRoll}".format(pos=self.__pos,
         #                                                                                                                                                  maxStones=self.__maxStones,
         #                                                                                                                                                  playerExclusiv=self.__playerExclusiv,
         #                                                                                                                                                  isSave=self.__isSave,
