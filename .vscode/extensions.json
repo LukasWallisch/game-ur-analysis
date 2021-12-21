@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "ms-vscode.atom-keybindings",
+        "hookyqr.beautify",
+        "mhutchie.git-graph",
+        "donjayamanne.githistory",
+        "eamodio.gitlens",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.jupyter-keymap",
+        "jebbs.plantuml",
+        "reddevil.pythondoc",
+        "ms-python.vscode-pylance",
+        "ms-python.python"
+    ]
+}
