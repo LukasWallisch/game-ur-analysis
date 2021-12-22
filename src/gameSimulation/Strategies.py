@@ -69,3 +69,41 @@ class MoveLastStrategy(Strategy):
         else:
             return None
     
+
+class ScoreStrategy(Strategy):
+    def __init__(self) -> None:
+        self.__name = "Score"
+        super().__init__()
+
+    def getName(self) -> str:
+        return self.__name
+
+    def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
+        possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
+        if len(possibleMoves) > 0:
+            scores = [(not m.srcField.getIsSave())*5 +
+                      (m.destField.getIsSave())*10+
+                      (m.destField.getDoubleRoll())*100+
+                      (m.destField.getPosition())-
+                      (m.srcField.getPosition())
+                       for m in possibleMoves]
+            return possibleMoves[scores.index(np.max(scores))]
+        else:
+            return None
+class ScoreDoubleRollStrategy(Strategy):
+    def __init__(self) -> None:
+        self.__name = "Score"
+        super().__init__()
+
+    def getName(self) -> str:
+        return self.__name
+
+    def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
+        possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
+        if len(possibleMoves) > 0:
+            scores = [(m.destField.getDoubleRoll())*100+
+                      (m.destField.getPosition())
+                       for m in possibleMoves]
+            return possibleMoves[scores.index(np.max(scores))]
+        else:
+            return None
