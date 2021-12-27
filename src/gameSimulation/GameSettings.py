@@ -2,9 +2,9 @@ from typing import List, Tuple
 
 import numpy as np
 
-import src.gameSimulation.Player as P
-import src.gameSimulation.Dice as D
-from src.gameSimulation.Strategies import Strategy
+from . import Player as P
+from . import Dice as D
+from .Strategies import Strategy
 
 
 class GameSettings:

@@ -1,8 +1,9 @@
-import src.gameSimulation.constants as c
-import src.gameSimulation.GameSettings as GS
-import src.gameSimulation.gameboard as GB
+from . import constants as c
+from . import GameSettings as GS
+from . import gameboard as GB
+from . import Player as P
+
 from typing import List
-import src.gameSimulation.Player as P
 
 
 class History(object):

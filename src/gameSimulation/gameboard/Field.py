@@ -1,14 +1,13 @@
 from __future__ import annotations
 from os import error
 from typing import TYPE_CHECKING, List
-from src.gameSimulation import constants
 if TYPE_CHECKING:
-    import Stone as S
-    from src.gameSimulation.Player import Player
-    from src.gameSimulation.GameSettings import GameSettings
-    import src.gameSimulation.gameboard.Gameboard as GB
+    from . import Stone as S
+    from Player import Player
+    from GameSettings import GameSettings
+    import Gameboard as GB
 
-import src.gameSimulation.constants as c
+from .. import constants as c
 
 
 class FieldFullError(error):

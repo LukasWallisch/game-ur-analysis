@@ -4,9 +4,9 @@ import numpy as np
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.gameSimulation.Player import Player
+    from Player import Player
 
-from src.gameSimulation.gameboard.Gameboard import Gameboard, MoveTuple
+from .gameboard.Gameboard import Gameboard, MoveTuple
 
 
 class Strategy(object):

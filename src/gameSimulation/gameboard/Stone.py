@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.gameSimulation.Player import Player
+    from Player import Player
 
 
 class Stone(object):

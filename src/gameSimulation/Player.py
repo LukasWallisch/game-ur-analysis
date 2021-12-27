@@ -1,9 +1,9 @@
 
 from typing import List
-import src.gameSimulation.gameboard as GB
-import src.gameSimulation.constants as c
+from . import gameboard as GB
+from . import constants as c
 
-import src.gameSimulation.Strategies as _Strategy
+from . import Strategies as _Strategy
 
 
 class Player:

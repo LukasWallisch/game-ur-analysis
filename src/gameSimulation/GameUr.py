@@ -1,12 +1,12 @@
 from typing import List
-import src.gameSimulation.History as H
-import src.gameSimulation.Dice as Dice
-import src.gameSimulation.gameboard as GB
-from src.gameSimulation.GameSettings import GameSettings
-from src.gameSimulation.Player import Player
+from . import History as H
+from . import Dice as Dice
+from . import gameboard as GB
+from .GameSettings import GameSettings
+from .Player import Player
 
-from src.gameSimulation.gameboard.Gameboard import MoveTuple
-from src.gameSimulation.gameboard.Stone import Stone
+from .gameboard.Gameboard import MoveTuple
+from .gameboard.Stone import Stone
 
 
 class GameUr:

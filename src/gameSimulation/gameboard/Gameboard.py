@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING, List
 
 
 if TYPE_CHECKING:
-    from src.gameSimulation.Player import Player
-    from src.gameSimulation.GameSettings import GameSettings
+    from Player import Player
+    from GameSettings import GameSettings
     from .Stone import Stone
 
 from .Field import Field
