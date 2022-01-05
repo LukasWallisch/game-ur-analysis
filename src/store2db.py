@@ -91,7 +91,7 @@ def store_data_2_db(data:Dict[GameSettings,List[GameUrDTO]]):
         con.execute("INSERT INTO gamesettings(" + gs_keys_formated +
                     ") values ("+gs_qms_formated+")", gs_values)
 
-    print(gs_index)
+    # print(gs_index)
 
     game_keys = ["gameSettingsID"]
     game_qms = ["?"]
@@ -103,8 +103,8 @@ def store_data_2_db(data:Dict[GameSettings,List[GameUrDTO]]):
     game_keys_formated = ", ".join(game_keys)
     game_qms_formated = ", ".join(game_qms)
     
-    print(game_keys_formated)
-    print(game_qms_formated)
+    # print(game_keys_formated)
+    # print(game_qms_formated)
 
     con.executemany("INSERT INTO game ("+game_keys_formated +") VALUES ("+game_qms_formated+")",
                     [[gs_index, *g.dbValues()] for g in data["history"]])

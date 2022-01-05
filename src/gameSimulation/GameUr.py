@@ -31,13 +31,13 @@ class GameUrDTO:
         return [
             self.__sp["stepcount"],
             self.__sp["roundcount"],
-            json.dumps(self.__winners),
+            json.dumps([p.getName() for p in self.__winners]),
             json.dumps(self.__sp["stones"]),
             json.dumps(self.__sp["roundID"]),
             json.dumps(self.__sp["activePlayer"]),
             json.dumps(self.__sp["diceRoll"]),
             json.dumps(self.__sp["moveDist"]),
-            json.dumps(self.__sp["newRound"])
+            json.dumps([int(id) for id in self.__sp["newRound"]])
         ]
 
 
@@ -47,7 +47,6 @@ class GameUr:
         self.__gb = GB.Gameboard(gs)
         self.__dice = gs.getDice()
         self.__players = gs.getPlayers()
-        # self.__round = 0
         self.__history = H.History(self.__gb, self.__gs)
 
     def run(self, maxRounds: int = 0):

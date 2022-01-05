@@ -33,10 +33,10 @@ if __name__ == "__main__":
     equalSettings = [4, 8, 2, [8], [4, 8, 13]]
 
     gs = [
-        GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings),
-        # GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings),
-        # GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
-        # GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings),
+        *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*10,
+        *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings)]*10,
+        *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings)]*10,
+        *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings)]*10,
         # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings),
         # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings),
         # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
@@ -46,15 +46,15 @@ if __name__ == "__main__":
         # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
         # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.D4(), *equalSettings),
     ]
-    runs = 1
+    runs = 100000
 
     delta0 = datetime.now()
-    h = Multirun.multirun(runs, 500, gs,True) 
+    cf = Multirun.multirunDB(runs, 500, gs)
     delta1 = datetime.now()
+    print("{} chunks finished after {}".format(cf, delta1-delta0))
 
     # h=[]
     # h.append(Multirun.runGame(gs[0],True))
-
 
     # id = 4
     # for i, h_sub in enumerate(h):
@@ -65,9 +65,8 @@ if __name__ == "__main__":
     #     delta1 = datetime.now()
     #     print("finished save after", delta1-delta0)
 
-    
-    for h_sub in h:
-        store_data_2_db(h_sub)
+    # for h_sub in h:
+    #     store_data_2_db(h_sub)
 
     # tmp = []
     # for i in range(3):
@@ -76,4 +75,3 @@ if __name__ == "__main__":
     #         tmp.append(json.load(f))
     #     delta1 = datetime.now()
     #     print("finished load after", delta1-delta0)
-

@@ -14,7 +14,7 @@ class History(object):
         self.__currentRound = 0
         self.__rounds.append(Round(self.__currentRound))
         self.__winner: P.Player = None
-        self.saveStep(gb, 0, 0, None)
+        self.saveStep(gb, -1, -1, None)
 
     def newRound(self) -> None:
         self.__currentRound += 1

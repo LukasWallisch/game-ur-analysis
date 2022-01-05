@@ -61,9 +61,9 @@ class D4(Dice):
 
 class MultiD2Dice(D2):
     def __init__(self, dicecount) -> None:
-        self._name = "Multi D2 with {} dice".format(dicecount)
-        self.__dicecount = dicecount
         super().__init__()
+        self._name = "Multi D2 ({})".format(dicecount)
+        self.__dicecount = dicecount
 
     def roll(self) -> int:
         d2_roll = super().roll
@@ -75,10 +75,10 @@ class MultiD2Dice(D2):
 
 class MultiD2DiceNo0(D2):
     def __init__(self, dicecount) -> None:
-        self._name = "Multi D2 with {} dice with {} instead of 0".format(
+        super().__init__()
+        self._name = "Multi D2 ({}) 0->{} ".format(
             dicecount, dicecount)
         self.__dicecount = dicecount
-        super().__init__()
 
     def roll(self) -> int:
         d2_roll = super().roll
