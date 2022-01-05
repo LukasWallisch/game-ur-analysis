@@ -1,4 +1,5 @@
-from typing import List
+import json
+from typing import Dict, List
 from . import History as H
 from . import Dice as Dice
 from . import gameboard as GB
@@ -7,6 +8,37 @@ from .Player import Player
 
 from .gameboard.Gameboard import MoveTuple
 from .gameboard.Stone import Stone
+
+
+class GameUrDTO:
+    def __init__(self, winners:List[Player],sp:Dict) -> None:
+        self.__winners = winners
+        self.__sp = sp
+
+    @classmethod
+    def dbKeys(cls):
+        return ["stepcount",
+                "roundcount",
+                "winners",
+                "stones",
+                "roundID",
+                "activePlayer",
+                "diceRoll",
+                "moveDist",
+                "newRound"]
+
+    def dbValues(self):
+        return [
+            self.__sp["stepcount"],
+            self.__sp["roundcount"],
+            json.dumps(self.__winners),
+            json.dumps(self.__sp["stones"]),
+            json.dumps(self.__sp["roundID"]),
+            json.dumps(self.__sp["activePlayer"]),
+            json.dumps(self.__sp["diceRoll"]),
+            json.dumps(self.__sp["moveDist"]),
+            json.dumps(self.__sp["newRound"])
+        ]
 
 
 class GameUr:
@@ -21,7 +53,7 @@ class GameUr:
     def run(self, maxRounds: int = 0):
         gameKeepRunning = True
         currentRound = 0
-        while gameKeepRunning and (maxRounds != 0 and currentRound <= maxRounds):
+        while gameKeepRunning and (maxRounds != 0 and currentRound < maxRounds):
             currentRound += 1
             gameKeepRunning = self.processRound()
         self.__history.saveWinner(self.getWinner())
@@ -35,6 +67,11 @@ class GameUr:
 
     def getGamelength(self):
         return self.__history.getRoundCount()
+
+    def getStonesHistory4db(self) -> List[GameUrDTO]:
+        w = self.getWinner()
+        sp = self.__history.getStonePositions4db()
+        return GameUrDTO(w,sp)
 
     def getStonesHistory(self, forJson: bool):
         w = self.getWinner()

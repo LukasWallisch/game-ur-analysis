@@ -15,6 +15,7 @@ package "GameUrStorage"  {
     entity gamesettings {
         * gameSettingsID <<generated>>
         --
+        * name
         * players : text
         * dice:text
         * prepareLength: number
