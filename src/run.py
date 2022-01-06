@@ -33,12 +33,19 @@ if __name__ == "__main__":
     equalSettings = [4, 8, 2, [8], [4, 8, 13]]
 
     gs = [
-        *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*10,
-        *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings)]*10,
-        *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings)]*10,
-        *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings)]*10,
-        # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings),
-        # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings),
+        # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*10,
+        # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings)]*10,
+        # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings)]*10,
+        # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings)]*10,
+
+        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.RandomStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
+        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
+        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.MoveLastStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
+        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.ScoreStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
+        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
+        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.ScoreThrowOpponentStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
+
+        # GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.ScoreThrowOpponentStrategy())], Dice.MultiD2Dice(4), *equalSettings),
         # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
         # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings),
         # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2Dice(4), *equalSettings),
