@@ -1,0 +1,28 @@
+@startuml test
+package "GameUrStorage"  {
+    entity game {
+        * gameID <<generated>>
+        --
+        * gameSettingsID
+        * stepcount: number
+        * roundcount: number
+        * winners: text(json)
+        * history: text
+        * roundsID: text
+        * newRound: text
+
+    }
+    entity gamesettings {
+        * gameSettingsID <<generated>>
+        --
+        * players : text
+        * dice:text
+        * prepareLength: number
+        * fightLength: number
+        * retreatLength: number
+        * fightSaveFields: text
+        * doubleRollFields: text
+        * noThrow: bool
+        * exactFinish: bool
+    }
+}

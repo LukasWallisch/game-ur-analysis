@@ -1,12 +1,15 @@
 import random
 import copy
 from datetime import datetime
+from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from . import GameUr, Strategies, Player, Dice, GameSettings
+from .GameUr import GameUr
+from .GameSettings import GameSettings
 from multiprocessing import Process, Queue
 import multiprocessing as mp
+import tqdm
 
 
 def getThreadCount()->int:
@@ -26,22 +29,37 @@ def runGameNTimes(n: int, gs: GameSettings, chunkId:int):
     # print("chunk {}: finished {} games in {} ".format(chunkId,n, delta1-delta0))
     return h
 
+def runGame(settings:Tuple[GameSettings, bool]):
+    gs,forJson = settings
+    g = GameUr(gs)
+    g.run(1000)
+    return g.getStonesHistory(forJson)
 
-def multirun(n: int, gamesPerChunk:int, gs: GameSettings):
+
+def multirun(n: int, gamesPerChunk:int, gs: List[GameSettings],forJson:bool):
     PROCESSES = mp.cpu_count()
     CHUNKS = n//gamesPerChunk
+    
 
-    print("processes:",PROCESSES)
-    print("total Games:", gamesPerChunk*CHUNKS)
+    # print("processes:",PROCESSES)
+    # print("total Games:", gamesPerChunk*CHUNKS)
     print("chunks:", CHUNKS)
     print("gamePerChunk:", gamesPerChunk)
+    print("gamesettings:", len(gs))
+    gamesDone = 0
     with mp.Pool(PROCESSES) as pool:
-        print("start pool")
-        results = pool.starmap(
-            runGameNTimes, [(gamesPerChunk, copy.deepcopy(gs), i) for i in range(CHUNKS)])
-        print("finish pool")
-
-    h = []
-    for h_sub in results:
-        h.extend(h_sub)
-    return h
+        results = []
+        for sub_gs in gs:
+            # print("start pool")
+            # results = pool.imap_unordered(runGame,
+            #      [copy.deepcopy(gs) for i in range(CHUNKS)],gamesPerChunk)
+            sub_results =[]
+            for x in tqdm.tqdm(pool.imap_unordered(runGame, [(copy.deepcopy(sub_gs), forJson) for i in range(n)], gamesPerChunk), total=n, unit="games"):
+                sub_results.append(x)
+            # print("finish pool")
+            results.append({"gs":sub_gs,"history":sub_results})
+    
+    # h = []
+    # for h_sub in results:
+    #     h.extend(h_sub)
+    return results
