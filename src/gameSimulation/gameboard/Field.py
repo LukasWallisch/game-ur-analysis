@@ -102,6 +102,15 @@ class Field(object):
                         return False
         return True
 
+    def wouldThrowOpponent(self, player:Player) -> bool:
+        if not self.playerCanPlaceStone(player):
+            return False
+        else:
+            for oldStone in self.__stones:
+                if oldStone.getPlayer() != player and not self.__playerExclusiv:
+                    return True
+            return False
+
     def __str__(self) -> str:
         stoneNameLenght = c.STONE_NAME_LEN
         if self.__pos == 0 or self.__pos == self.__gs.getGamelength()+1:  # start- / endfields
