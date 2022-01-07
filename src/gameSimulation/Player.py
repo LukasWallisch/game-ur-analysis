@@ -32,3 +32,7 @@ class Player:
 
     def __repr__(self) -> str:
         return "Player: id:{id}, strategy:{strategy}, stones:{stones}".format(id=self.__id, strategy=self.__strategy, stones=",".join([str(s)for s in self.__stones]))
+
+    
+    def getJson(self) -> dict:
+        return {"__player__":{"id":self.__id,"stone_count":len(self.__stones),"strategy":self.__strategy.getName()}}

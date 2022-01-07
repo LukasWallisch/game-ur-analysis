@@ -18,14 +18,14 @@ class GameUr:
         # self.__round = 0
         self.__history = H.History(self.__gb, self.__gs)
 
-    def run(self, maxRounds:int=0):
+    def run(self, maxRounds: int = 0):
         gameKeepRunning = True
-        currentRound=0
+        currentRound = 0
         while gameKeepRunning and (maxRounds != 0 and currentRound <= maxRounds):
-            currentRound+=1
+            currentRound += 1
             gameKeepRunning = self.processRound()
         self.__history.saveWinner(self.getWinner())
-    
+
     def reset(self):
         self.__gb = GB.Gameboard(self.__gs)
         self.__dice = self.__gs.getDice()
@@ -35,21 +35,32 @@ class GameUr:
 
     def getGamelength(self):
         return self.__history.getRoundCount()
-    
-    def getStonesHistory(self):
+
+    def getStonesHistory(self, forJson: bool):
         w = self.getWinner()
         gl = self.getGamelength()
-        sp = self.__history.getStonePositions()
-        return {"winner":w,"gameLength":gl,"history":sp,"players":self.__players,"dice":self.__dice,"gameSettings":self.__gs}
+        sp = self.__history.getStonePositions(forJson)
+        if forJson:
+            return {"winner": [w_.getName() for w_ in w],
+                    "history": sp,
+                    }
+        else:
+            return {"winner": w,
+                    "gameLength": gl,
+                    "history": sp,
+                    "players": self.__players,
+                    "dice": self.__dice,
+                    "gameSettings": self.__gs
+                    }
 
     def __str__(self):
         return "Königliches Spiel von Ur:\n{history}".format(history=self.__history.getInfo())
 
-    def __repr__(self) -> str:
-        return self.__str__()
+    # def __repr__(self) -> str:
+    #     return self.__str__()
 
     def getWinner(self) -> List[Player]:
-        winner=[]
+        winner = []
         for player in self.__players:
             if set(self.__gb.getEndField().getStones4Player(player)) == set(player.getStones()):
                 winner.append(player)
@@ -57,7 +68,6 @@ class GameUr:
 
     def getGB(self):
         return self.__gb
-
 
     def processRound(self) -> bool:
         self.__history.newRound()
@@ -74,12 +84,11 @@ class GameUr:
         move.srcField.removeStone(move.stone)
         thrownStones = move.destField.addStone(move.stone)
         return thrownStones
-    
+
     def executeThrowMove(self, stone: Stone) -> List[MoveTuple]:
         thrownStones = self.__gb.getStartField().addStone(stone)
         return thrownStones
 
-    
     def doMove(self, player: Player, diceRoll: int) -> List[GB.Stone]:
         # print("doMove für Player {player}, diceRoll: {diceRoll}".format(player=player,diceRoll=diceRoll))
         landedOnDoubleRoll = False

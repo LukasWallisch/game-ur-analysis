@@ -1,23 +1,73 @@
-import src.gameSimulation.Player as P
-import sys
-import os
-print(sys.path)
-print(os.getcwd())
-import src.gameSimulation.GameUr as GameUr
-from src.gameSimulation.Dice import MultiD2
-from src.gameSimulation.GameSettings import GameSettings
-from src.gameSimulation.Strategies import StrategyRandom
+from json import encoder
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import random
+import json
+import numpy as np
+from datetime import datetime
+
+from gameSimulation.GameUr import GameUr, Player, Dice, GameSettings
+import gameSimulation.Strategies as S
+import gameSimulation.Multirun as Multirun
+import gameSimulation.jsonDeEncoders as jsonDE
+
+from scipy import stats
+
+
+# %config InlineBackend.figure_formats = ['svg']
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mplTicker
+import matplotlib.style as mplstyle
+from matplotlib.colors import LinearSegmentedColormap
+
+mplstyle.use('fast')
+mplstyle.use('default')
+# mpl.rcParams['figure.figsize'] = [20, 10]
+
+colors = ["lightgreen", "yellow", "red"]
+cmap = LinearSegmentedColormap.from_list("mycmap", colors)
 
 if __name__ == "__main__":
+    equalSettings = [4, 8, 2, [8], [4, 8, 13]]
 
-    dice = MultiD2(4)
-    s = StrategyRandom()
-    p1 = P.Player(0, 7, s)
-    p2 = P.Player(1, 7, s)
+    gs = [
+        GameSettings("MF vs MF", [Player(0, 7, S.MoveFirstStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.MoveFirstStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.MoveFirstStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.MoveFirstStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2Dice(4), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2Dice(3), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
+        # GameSettings("MF vs MF", [Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.D4(), *equalSettings),
+    ]
+    runs = 1
 
-    print(repr(p1))
-    print(p1.getStrategy())
-    gs = GameSettings([p1, p2], dice, 4, 8, 2, [8], [1, 8, 14])
-    ur = GameUr.GameUr(gs)
-    ur.tmp()
-    print(ur)
+    delta0 = datetime.now()
+    h = Multirun.multirun(runs, 500, gs,True) 
+    delta1 = datetime.now()
+
+    # h=[]
+    # h.append(Multirun.runGame(gs[0],True))
+
+
+    id = 4
+    for i, h_sub in enumerate(h):
+        delta0 = datetime.now()
+        print("start save at ", delta0)
+        with open("G:/Uni/BA/data/history_data_{:02d}_{:02d}.json".format(id,i), "w") as f:
+            json.dump(h[i], f, cls=jsonDE.PlayerEncoder, indent=4)
+        delta1 = datetime.now()
+        print("finished save after", delta1-delta0)
+
+    # tmp = []
+    # for i in range(3):
+    #     delta0 = datetime.now()
+    #     with open("data/history_data_{:02d}.json".format(i), "r") as f:
+    #         tmp.append(json.load(f))
+    #     delta1 = datetime.now()
+    #     print("finished load after", delta1-delta0)
+

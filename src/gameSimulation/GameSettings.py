@@ -9,6 +9,7 @@ from .Strategies import Strategy
 
 class GameSettings:
     def __init__(self,
+                 name: str,
                  players: List[P.Player],
                  dice: D.Dice,
                  prepareLength: int,
@@ -17,7 +18,7 @@ class GameSettings:
                  fightSaveFields: List[int],
                  doubleRollFields: List[int],
                  noThrow: bool = False,
-                 exactFinish:bool = True
+                 exactFinish: bool = True
                  ) -> None:
         """ players: List[P.Player],
                  dice: D.Dice,
@@ -31,6 +32,7 @@ class GameSettings:
         Returns:
             int: [description]
         """
+        self.__name = name
         self.__players = players
         self.__dice = dice
         self.__prepareLength = prepareLength
@@ -41,6 +43,17 @@ class GameSettings:
         self.__noThrow = noThrow
         self.__exactFinish = exactFinish
 
+    def getJson(self):
+        return {"name": self.__name,
+                "players": self.__players,
+                "dice": self.__dice,
+                "prepareLength": self.__prepareLength,
+                "fightLength": self.__fightLength,
+                "retreatLength": self.__retreatLength,
+                "fightSaveFields": self.__fightSaveFields,
+                "doubleRollFields": self.__doubleRollFields,
+                "noThrow": self.__noThrow,
+                "exactFinish": self.__exactFinish}
 
     def getGamelength(self) -> int:
         """Summe aus prepare, fight und retreat plus zusätzlich zwei Felder für Start und Ende
@@ -51,13 +64,14 @@ class GameSettings:
 
         return self.__prepareLength+self.__fightLength+self.__retreatLength+2
 
-    def getFieldsSettings(self) :
-        return{"prepareLength":self.__prepareLength,
-        "fightLength":self.__fightLength,
-        "retreatLength":self.__retreatLength,
-        "fightSaveFields":self.__fightSaveFields,
-        "doubleRollFields":self.__doubleRollFields}
-    def getFieldSettings(self, position:int) -> Tuple[int,bool]:
+    def getFieldsSettings(self):
+        return{"prepareLength": self.__prepareLength,
+               "fightLength": self.__fightLength,
+               "retreatLength": self.__retreatLength,
+               "fightSaveFields": self.__fightSaveFields,
+               "doubleRollFields": self.__doubleRollFields}
+
+    def getFieldSettings(self, position: int) -> Tuple[int, bool]:
         if position == 0 or position == self.getGamelength()-1:
             maxStones = max([len(p.getStones()) for p in self.__players])
             exclusiv = True
@@ -74,10 +88,9 @@ class GameSettings:
 
         return (maxStones, exclusiv, isSave, doubleRoll)
 
-        
     def getPlayers(self) -> List[P.Player]:
         return self.__players
-    
+
     def getStrategies(self) -> List[Strategy]:
         return [p.getStrategy() for p in self.__players]
 

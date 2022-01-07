@@ -45,18 +45,19 @@ class History(object):
     def printLastStep(self) ->None:
         print(self.__rounds[-1].getSteps()[-1].getInfo(len(self.__players)))
 
-    def getStonePositions(self) -> dir:
+    def getStonePositions(self, forJson: bool) -> dir:
         stonePositions = {"stones":{}}
         for p in self.__players:
             stonePositions["stones"].update({p.getName(): {}})
             for s in p.getStones():
                 stonePositions["stones"][p.getName()].update({s.getName(): []})
-        stonePositions.update({"globalStepID": []})
         stonePositions.update({"roundID": []})
         stonePositions.update({"activePlayer": []})
         stonePositions.update({"diceRoll": []})
         stonePositions.update({"moveDist": []})
         stonePositions.update({"newRound": []})
+        if not forJson:
+            stonePositions.update({"globalStepID": []})
 
         roundID = -1
         globalStepID=0
@@ -66,8 +67,9 @@ class History(object):
             for s in r.getSteps():
                 
                 stonePositions["roundID"].append(roundID)
-                stonePositions["globalStepID"].append(globalStepID)
-                globalStepID += 1
+                if not forJson:
+                    stonePositions["globalStepID"].append(globalStepID)
+                    globalStepID += 1
 
                 player = s.getActivePlayer().getName() if s.getActivePlayer() != None else None
                 stonePositions["activePlayer"].append(player)
