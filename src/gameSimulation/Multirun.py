@@ -5,6 +5,8 @@ from typing import List, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+
+from store2db import createTabels, store_data_2_db
 from .GameUr import GameUr
 from .GameSettings import GameSettings
 from multiprocessing import Process, Queue
@@ -36,6 +38,12 @@ def runGame(settings:Tuple[GameSettings, bool]):
     return g.getStonesHistory(forJson)
 
 
+def runGameDB(gs: GameSettings):
+    g = GameUr(gs)
+    g.run(1000)
+    return g.getStonesHistory4db()
+
+
 def multirun(n: int, gamesPerChunk:int, gs: List[GameSettings],forJson:bool):
     PROCESSES = mp.cpu_count()
     CHUNKS = n//gamesPerChunk
@@ -63,3 +71,28 @@ def multirun(n: int, gamesPerChunk:int, gs: List[GameSettings],forJson:bool):
     # for h_sub in results:
     #     h.extend(h_sub)
     return results
+
+def multirunDB(n: int, gamesPerChunk:int, gs: List[GameSettings]):
+    PROCESSES = mp.cpu_count()
+    CHUNKS = n//gamesPerChunk
+    
+
+    # print("processes:",PROCESSES)
+    # print("total Games:", gamesPerChunk*CHUNKS)
+    print("chunks:", CHUNKS)
+    print("gamePerChunk:", gamesPerChunk)
+    print("gamesettings:", len(gs))
+    createTabels()
+    with mp.Pool(PROCESSES) as pool:
+        chunksFinished = 0
+        for sub_gs in gs:
+            sub_results =[]
+            for x in tqdm.tqdm(pool.imap_unordered(runGameDB, [copy.deepcopy(sub_gs) for i in range(n)], gamesPerChunk), total=n, unit="games"):
+                sub_results.append(x)
+            chunksFinished += 1
+            store_data_2_db({"gs": sub_gs, "history": sub_results})
+    
+    # h = []
+    # for h_sub in results:
+    #     h.extend(h_sub)
+    return chunksFinished

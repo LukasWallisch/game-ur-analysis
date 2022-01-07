@@ -89,7 +89,7 @@ class MoveLastStrategy(Strategy):
 
 class ScoreStrategy(Strategy):
     def __init__(self) -> None:
-        self.__name = "Score"
+        self.__name = "Score_DR+MD"
         super().__init__()
 
     def getName(self) -> str:
@@ -109,7 +109,7 @@ class ScoreStrategy(Strategy):
             return None
 class ScoreDoubleRollStrategy(Strategy):
     def __init__(self) -> None:
-        self.__name = "Score"
+        self.__name = "Score_DR"
         super().__init__()
 
     def getName(self) -> str:

@@ -1,4 +1,5 @@
-from typing import List
+import json
+from typing import Dict, List
 from . import History as H
 from . import Dice as Dice
 from . import gameboard as GB
@@ -9,19 +10,49 @@ from .gameboard.Gameboard import MoveTuple
 from .gameboard.Stone import Stone
 
 
+class GameUrDTO:
+    def __init__(self, winners:List[Player],sp:Dict) -> None:
+        self.__winners = winners
+        self.__sp = sp
+
+    @classmethod
+    def dbKeys(cls):
+        return ["stepcount",
+                "roundcount",
+                "winners",
+                "stones",
+                "roundID",
+                "activePlayer",
+                "diceRoll",
+                "moveDist",
+                "newRound"]
+
+    def dbValues(self):
+        return [
+            self.__sp["stepcount"],
+            self.__sp["roundcount"],
+            json.dumps([p.getName() for p in self.__winners]),
+            json.dumps(self.__sp["stones"]),
+            json.dumps(self.__sp["roundID"]),
+            json.dumps(self.__sp["activePlayer"]),
+            json.dumps(self.__sp["diceRoll"]),
+            json.dumps(self.__sp["moveDist"]),
+            json.dumps([int(id) for id in self.__sp["newRound"]])
+        ]
+
+
 class GameUr:
     def __init__(self, gs: GameSettings) -> None:
         self.__gs = gs
         self.__gb = GB.Gameboard(gs)
         self.__dice = gs.getDice()
         self.__players = gs.getPlayers()
-        # self.__round = 0
         self.__history = H.History(self.__gb, self.__gs)
 
     def run(self, maxRounds: int = 0):
         gameKeepRunning = True
         currentRound = 0
-        while gameKeepRunning and (maxRounds != 0 and currentRound <= maxRounds):
+        while gameKeepRunning and (maxRounds != 0 and currentRound < maxRounds):
             currentRound += 1
             gameKeepRunning = self.processRound()
         self.__history.saveWinner(self.getWinner())
@@ -35,6 +66,11 @@ class GameUr:
 
     def getGamelength(self):
         return self.__history.getRoundCount()
+
+    def getStonesHistory4db(self) -> List[GameUrDTO]:
+        w = self.getWinner()
+        sp = self.__history.getStonePositions4db()
+        return GameUrDTO(w,sp)
 
     def getStonesHistory(self, forJson: bool):
         w = self.getWinner()

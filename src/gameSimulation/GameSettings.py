@@ -1,10 +1,12 @@
-from typing import List, Tuple
+import json
+from typing import Dict, List, Tuple
 
 import numpy as np
 
 from . import Player as P
 from . import Dice as D
 from .Strategies import Strategy
+from .jsonDeEncoders import PlayerEncoder, decodingHooks
 
 
 class GameSettings:
@@ -43,9 +45,52 @@ class GameSettings:
         self.__noThrow = noThrow
         self.__exactFinish = exactFinish
 
+    @classmethod
+    def fromDB(cls, row: Dict):
+        return GameSettings(json.loads(row["players"],
+                                       object_hook=decodingHooks),
+                            json.loads(row["dice"], object_hook=decodingHooks),
+                            row["prepareLength"],
+                            row["fightLength"],
+                            row["retreatLength"],
+                            json.loads(row["fightSaveFields"]),
+                            json.loads(row["doubleRollFields"]),
+                            bool(row["noThrow"]),
+                            bool(row["exactFinish"])
+                            )
+
+    def dbKeyValues(self):
+
+        return {"players": json.dumps(self.__players, cls=PlayerEncoder),
+                "dice": self.__dice.getJson(),
+                "prepareLength": self.__prepareLength,
+                "fightLength": self.__fightLength,
+                "retreatLength": self.__retreatLength,
+                "fightSaveFields": json.dumps(self.__fightSaveFields),
+                "doubleRollFields": json.dumps(self.__doubleRollFields),
+                "noThrow": int(self.__noThrow),
+                "exactFinish": int(self.__exactFinish)}
+
+    def __eq__(self, __o: object) -> bool:
+        if not isinstance(__o, GameSettings):
+            # print("wrong Type")
+            # print(__o)
+            return False
+        else:
+            d = __o.__dice == self.__dice
+            pl = __o.__players == self.__players
+            ppL = __o.__prepareLength == self.__prepareLength
+            fL = __o.__fightLength == self.__fightLength
+            rL = __o.__retreatLength == self.__retreatLength
+            fsF = __o.__fightSaveFields == self.__fightSaveFields
+            drF = __o.__doubleRollFields == self.__doubleRollFields
+            nT = __o.__noThrow == self.__noThrow
+            ef = __o.__exactFinish == self.__exactFinish
+            # print([d, pl, ppL, fL, rL, fsF, drF, nT, ef])
+            return all([d, pl, ppL, fL, rL, fsF, drF, nT, ef])
+
     def getJson(self):
-        return {"name": self.__name,
-                "players": self.__players,
+        return {"players": self.__players,
                 "dice": self.__dice,
                 "prepareLength": self.__prepareLength,
                 "fightLength": self.__fightLength,

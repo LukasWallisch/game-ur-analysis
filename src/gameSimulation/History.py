@@ -3,7 +3,7 @@ from . import GameSettings as GS
 from . import gameboard as GB
 from . import Player as P
 
-from typing import List
+from typing import Dict, List
 
 
 class History(object):
@@ -14,7 +14,7 @@ class History(object):
         self.__currentRound = 0
         self.__rounds.append(Round(self.__currentRound))
         self.__winner: P.Player = None
-        self.saveStep(gb, 0, 0, None)
+        self.saveStep(gb, -1, -1, None)
 
     def newRound(self) -> None:
         self.__currentRound += 1
@@ -65,7 +65,6 @@ class History(object):
             newRound = True
             roundID += 1
             for s in r.getSteps():
-                
                 stonePositions["roundID"].append(roundID)
                 if not forJson:
                     stonePositions["globalStepID"].append(globalStepID)
@@ -81,6 +80,40 @@ class History(object):
                     for st in f.getStones():
                         stonePositions["stones"][st.getPlayer().getName()][st.getName()].append(
                             f.getPos())
+        return stonePositions
+
+
+    def getStonePositions4db(self) -> Dict:
+        stonePositions = {"stones":{}}
+        for p in self.__players:
+            stonePositions["stones"].update({p.getName(): {}})
+            for s in p.getStones():
+                stonePositions["stones"][p.getName()].update({s.getName(): []})
+        stonePositions.update({"roundID": []})
+        stonePositions.update({"activePlayer": []})
+        stonePositions.update({"diceRoll": []})
+        stonePositions.update({"moveDist": []})
+        stonePositions.update({"newRound": []})
+
+        roundID = -1
+        for r in self.__rounds:
+            newRound = True
+            roundID += 1
+            for s in r.getSteps():
+                stonePositions["roundID"].append(roundID)
+                player = s.getActivePlayer().getName() if s.getActivePlayer() != None else None
+                stonePositions["activePlayer"].append(player)
+                stonePositions["diceRoll"].append(s.getDiceRoll())
+                stonePositions["moveDist"].append(s.getMoveDist())
+                stonePositions["newRound"].append(newRound)
+                newRound = False
+                for f in s.getFields():
+                    for st in f.getStones():
+                        stonePositions["stones"][st.getPlayer().getName()][st.getName()].append(
+                            f.getPos())
+        
+        stonePositions.update({"stepcount": len(stonePositions["roundID"])-1})
+        stonePositions.update({"roundcount": max(stonePositions["roundID"])})
         return stonePositions
 
     def getRoundCount(self) -> int:
