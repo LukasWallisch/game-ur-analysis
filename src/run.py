@@ -10,27 +10,10 @@ import gameSimulation.Strategies as S
 import gameSimulation.Multirun as Multirun
 import gameSimulation.jsonDeEncoders as jsonDE
 
-from scipy import stats
-
-
-# %config InlineBackend.figure_formats = ['svg']
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mplTicker
-import matplotlib.style as mplstyle
-from matplotlib.colors import LinearSegmentedColormap
-
-from store2db import store_data_2_db
-
-mplstyle.use('fast')
-mplstyle.use('default')
-# mpl.rcParams['figure.figsize'] = [20, 10]
-
-colors = ["lightgreen", "yellow", "red"]
-cmap = LinearSegmentedColormap.from_list("mycmap", colors)
 
 if __name__ == "__main__":
-    equalSettings = [4, 8, 2, [8], [4, 8, 13]]
+    equalSettings = [Dice.MultiD2Dice(4),4, 8, 2, [8], [4, 8, 14]]
+    p0 = Player(0, 7, S.ScoreDoubleRollStrategy())
 
     gs = [
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*10,
@@ -38,25 +21,42 @@ if __name__ == "__main__":
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings)]*10,
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings)]*10,
 
-        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.RandomStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
-        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
-        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.MoveLastStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
-        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.ScoreStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
-        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
-        *[GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.ScoreThrowOpponentStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*5,
+        *[GameSettings([p0, Player( 1, 7, S.RandomStrategy())],  *equalSettings)]*5,
+        *[GameSettings([p0, Player( 1, 7, S.MoveFirstStrategy())], *equalSettings)]*5,
+        *[GameSettings([p0, Player( 1, 7, S.MoveLastStrategy())], *equalSettings)]*5,
+        *[GameSettings([p0, Player( 1, 7, S.ScoreStrategy())], *equalSettings)]*5,
+        *[GameSettings([p0, Player( 1, 7, S.ScoreDoubleRollStrategy())], *equalSettings)]*5,
+        *[GameSettings([p0, Player( 1, 7, S.ScoreThrowOpponentStrategy())], *equalSettings)]*5,
 
-        # GameSettings([Player(0, 7, S.RandomStrategy()), Player( 1, 7, S.ScoreThrowOpponentStrategy())], Dice.MultiD2Dice(4), *equalSettings),
-        # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
-        # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings),
-        # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2Dice(4), *equalSettings),
-        # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2Dice(3), *equalSettings),
-        # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings),
-        # GameSettings([Player(0, 7, S.ScoreDoubleRollStrategy()), Player( 1, 7, S.ScoreDoubleRollStrategy())], Dice.D4(), *equalSettings),
+
+        # *[GameSettings([Player( 1, 7, S.RandomStrategy())],  *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 7, S.MoveFirstStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 7, S.MoveLastStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 7, S.ScoreStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 7, S.ScoreDoubleRollStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 7, S.ScoreThrowOpponentStrategy())], *equalSettings)]*5,
     ]
-    runs = 100000
+    gs_fastest = [
+        # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*10,
+        # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(3), *equalSettings)]*10,
+        # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings)]*10,
+        # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings)]*10,
+
+        # (GameSettings([p0, Player( 1, 7, S.RandomStrategy())],  *equalSettings),50),
+        # (GameSettings([p0, Player( 1, 7, S.MoveFirstStrategy())], *equalSettings),50),
+        # (GameSettings([p0, Player( 1, 7, S.MoveLastStrategy())], *equalSettings),50),
+        # (GameSettings([p0, Player( 1, 7, S.ScoreStrategy())], *equalSettings),50),
+        # (GameSettings([p0, Player( 1, 7, S.ScoreDoubleRollStrategy())], *equalSettings),50),
+        # (GameSettings([p0, Player( 1, 7, S.ScoreThrowOpponentStrategy())], *equalSettings),50),
+        (GameSettings([p0], *equalSettings),20),
+    ]
+    runs = 50000
+
 
     delta0 = datetime.now()
-    cf = Multirun.multirunDB(runs, 500, gs)
+    # cf = Multirun.multirunDB(runs,-1, 500, gs)
+    cf = Multirun.multirunDB(runs,8, 1000, gs,"scoreDR")
+
     delta1 = datetime.now()
     print("{} chunks finished after {}".format(cf, delta1-delta0))
 

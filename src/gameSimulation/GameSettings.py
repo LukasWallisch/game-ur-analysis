@@ -11,7 +11,6 @@ from .jsonDeEncoders import PlayerEncoder, decodingHooks
 
 class GameSettings:
     def __init__(self,
-                 name: str,
                  players: List[P.Player],
                  dice: D.Dice,
                  prepareLength: int,
@@ -34,7 +33,6 @@ class GameSettings:
         Returns:
             int: [description]
         """
-        self.__name = name
         self.__players = players
         self.__dice = dice
         self.__prepareLength = prepareLength

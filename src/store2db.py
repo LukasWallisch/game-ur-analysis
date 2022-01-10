@@ -17,8 +17,11 @@ def dict_factory(cursor, row):
     return d
 
 
-def createTabels():
-    con = sqlite3.connect("G:/Uni/BA/data/gameHistories.db")
+def createTabels(db_file_name_suffix:str):
+    if db_file_name_suffix == "":
+        con = sqlite3.connect("G:/Uni/BA/data/gameHistories.db")
+    else:
+        con = sqlite3.connect("G:/Uni/BA/data/gameHistories_{}.db".format(db_file_name_suffix))
     con.row_factory = dict_factory
 
     con.execute('''CREATE TABLE IF NOT EXISTS game ( 
@@ -50,8 +53,11 @@ def createTabels():
     con.commit
 
 
-def store_data_2_db(data:Dict[GameSettings,List[GameUrDTO]]):
-    con = sqlite3.connect("G:/Uni/BA/data/gameHistories.db")
+def store_data_2_db(data:Dict[GameSettings,List[GameUrDTO]], db_file_name_suffix:str):
+    if db_file_name_suffix == "":
+        con = sqlite3.connect("G:/Uni/BA/data/gameHistories.db")
+    else:
+        con = sqlite3.connect("G:/Uni/BA/data/gameHistories_{}.db".format(db_file_name_suffix))
     con.row_factory = dict_factory
 
     gs: GameSettings = data["gs"]

@@ -66,8 +66,10 @@ def makeGameboardDisplay(ax: maxes.Axes,
                  doubleRollFields: List[int],
                  xoff=0,
                  show_label=False,
-                 singleRow = True) -> None:
-    __setHspans(ax, fightSaveFields,doubleRollFields)
+                 singleRow = True,
+                 show_hspans=True) -> None:
+    if show_hspans:
+        __setHspans(ax, fightSaveFields,doubleRollFields)
     gl = prepareLength+fightLength+retreatLength+2
     # create 3xgamelen grid to plot the artists
     grid = np.mgrid[0:1, 0:gl].reshape(2, -1).T

@@ -1,3 +1,4 @@
+import multiprocessing
 import random
 import copy
 from datetime import datetime
@@ -43,6 +44,12 @@ def runGameDB(gs: GameSettings):
     g.run(1000)
     return g.getStonesHistory4db()
 
+def runGameDBfastest(settings:Tuple[GameSettings,int]):
+    gs,fastest = settings
+    g = GameUr(gs)
+    g.run(fastest)
+    return g.getStonesHistory4db(),g.getGamelength()
+
 
 def multirun(n: int, gamesPerChunk:int, gs: List[GameSettings],forJson:bool):
     PROCESSES = mp.cpu_count()
@@ -72,8 +79,11 @@ def multirun(n: int, gamesPerChunk:int, gs: List[GameSettings],forJson:bool):
     #     h.extend(h_sub)
     return results
 
-def multirunDB(n: int, gamesPerChunk:int, gs: List[GameSettings]):
-    PROCESSES = mp.cpu_count()
+def multirunDB(n: int,processes:int, gamesPerChunk:int, gs: List[GameSettings],db_name_suffix:str):
+    if processes == -1 or processes >= mp.cpu_count():
+        PROCESSES = mp.cpu_count()
+    else:
+        PROCESSES = processes
     CHUNKS = n//gamesPerChunk
     
 
@@ -82,15 +92,55 @@ def multirunDB(n: int, gamesPerChunk:int, gs: List[GameSettings]):
     print("chunks:", CHUNKS)
     print("gamePerChunk:", gamesPerChunk)
     print("gamesettings:", len(gs))
-    createTabels()
+    createTabels(db_name_suffix)
     with mp.Pool(PROCESSES) as pool:
         chunksFinished = 0
-        for sub_gs in gs:
+        for i,sub_gs in enumerate(gs):
+            print("for gs {}/{}".format(i, len(gs)))
             sub_results =[]
             for x in tqdm.tqdm(pool.imap_unordered(runGameDB, [copy.deepcopy(sub_gs) for i in range(n)], gamesPerChunk), total=n, unit="games"):
                 sub_results.append(x)
             chunksFinished += 1
-            store_data_2_db({"gs": sub_gs, "history": sub_results})
+            store_data_2_db({"gs": sub_gs, "history": sub_results},db_name_suffix)
+    
+    # h = []
+    # for h_sub in results:
+    #     h.extend(h_sub)
+    return chunksFinished
+
+
+def multirunDBSearchforFastest(n: int,processes:int, gamesPerChunk:int, gs: List[Tuple[GameSettings,int]],updateFastesNtimes:int =0 ):
+    if processes == -1 or processes >= mp.cpu_count():
+        PROCESSES = mp.cpu_count()
+    else:
+        PROCESSES = processes
+    CHUNKS = n//gamesPerChunk
+    
+
+    # print("processes:",PROCESSES)
+    # print("total Games:", gamesPerChunk*CHUNKS)
+    print("processes:", PROCESSES)
+    print("updateFastesNtimes:", updateFastesNtimes)
+    print("chunks:", CHUNKS)
+    print("gamePerChunk:", gamesPerChunk)
+    print("gamesettings:", len(gs))
+    createTabels("fastest")
+    with mp.Pool(PROCESSES) as pool:
+        chunksFinished = 0
+        for i,gs_ in enumerate(gs):
+            sub_gs,start_fastest = gs_
+            sub_results =[]
+            current_fastest = start_fastest
+            for j in range(updateFastesNtimes):
+                print("update {}/{} for gs {}/{}".format(j,updateFastesNtimes, i, len(gs)))
+                
+                print("current_fastest: {}".format(current_fastest))
+                for x,new_fastest in tqdm.tqdm(pool.imap_unordered(runGameDBfastest, [(sub_gs,current_fastest) for i in range(n//updateFastesNtimes+1)], gamesPerChunk), total=n//updateFastesNtimes+1, unit="games"):
+                    sub_results.append(x)
+                    if new_fastest < current_fastest:
+                        current_fastest = new_fastest
+            chunksFinished += 1
+            store_data_2_db({"gs": sub_gs, "history": sub_results},"fastest")
     
     # h = []
     # for h_sub in results:
