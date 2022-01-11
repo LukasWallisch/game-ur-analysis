@@ -96,9 +96,9 @@ def multirunDB(n: int,processes:int, gamesPerChunk:int, gs: List[GameSettings],d
     with mp.Pool(PROCESSES) as pool:
         chunksFinished = 0
         for i,sub_gs in enumerate(gs):
-            print("for gs {}/{}".format(i, len(gs)))
+            print("for gs {}/{}".format(i+1, len(gs)))
             sub_results =[]
-            for x in tqdm.tqdm(pool.imap_unordered(runGameDB, [copy.deepcopy(sub_gs) for i in range(n)], gamesPerChunk), total=n, unit="games"):
+            for x in tqdm.tqdm(pool.imap_unordered(runGameDB, [sub_gs for _ in range(n)], gamesPerChunk), total=n, unit="games"):
                 sub_results.append(x)
             chunksFinished += 1
             store_data_2_db({"gs": sub_gs, "history": sub_results},db_name_suffix)
@@ -132,7 +132,7 @@ def multirunDBSearchforFastest(n: int,processes:int, gamesPerChunk:int, gs: List
             sub_results =[]
             current_fastest = start_fastest
             for j in range(updateFastesNtimes):
-                print("update {}/{} for gs {}/{}".format(j,updateFastesNtimes, i, len(gs)))
+                print("update {}/{} for gs {}/{}".format(j+1,updateFastesNtimes, i+1, len(gs)))
                 
                 print("current_fastest: {}".format(current_fastest))
                 for x,new_fastest in tqdm.tqdm(pool.imap_unordered(runGameDBfastest, [(sub_gs,current_fastest) for i in range(n//updateFastesNtimes+1)], gamesPerChunk), total=n//updateFastesNtimes+1, unit="games"):

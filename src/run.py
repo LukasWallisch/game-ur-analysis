@@ -13,7 +13,7 @@ import gameSimulation.jsonDeEncoders as jsonDE
 
 if __name__ == "__main__":
     equalSettings = [Dice.MultiD2Dice(4),4, 8, 2, [8], [4, 8, 14]]
-    p0 = Player(0, 7, S.ScoreDoubleRollStrategy())
+    p0 = Player(0, 7, S.RandomStrategy())
 
     gs = [
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*10,
@@ -21,7 +21,7 @@ if __name__ == "__main__":
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings)]*10,
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings)]*10,
 
-        *[GameSettings([p0, Player( 1, 7, S.RandomStrategy())],  *equalSettings)]*5,
+        *[GameSettings([p0, Player( 1, 7, S.RandomStrategy())],  *equalSettings)]*3,
         *[GameSettings([p0, Player( 1, 7, S.MoveFirstStrategy())], *equalSettings)]*5,
         *[GameSettings([p0, Player( 1, 7, S.MoveLastStrategy())], *equalSettings)]*5,
         *[GameSettings([p0, Player( 1, 7, S.ScoreStrategy())], *equalSettings)]*5,
@@ -48,14 +48,18 @@ if __name__ == "__main__":
         # (GameSettings([p0, Player( 1, 7, S.ScoreStrategy())], *equalSettings),50),
         # (GameSettings([p0, Player( 1, 7, S.ScoreDoubleRollStrategy())], *equalSettings),50),
         # (GameSettings([p0, Player( 1, 7, S.ScoreThrowOpponentStrategy())], *equalSettings),50),
-        (GameSettings([p0], *equalSettings),20),
+        # (GameSettings([p0], *equalSettings),20),
     ]
-    runs = 50000
+    runs = 100000
 
 
     delta0 = datetime.now()
     # cf = Multirun.multirunDB(runs,-1, 500, gs)
-    cf = Multirun.multirunDB(runs,8, 1000, gs,"scoreDR")
+    cf = Multirun.multirunDB(runs,10, 100, gs,"random")
+
+
+    #5000 [03:37<00:00, 229.91games/s]
+    #5000 [03:46<00:00, 220.46games/s]
 
     delta1 = datetime.now()
     print("{} chunks finished after {}".format(cf, delta1-delta0))

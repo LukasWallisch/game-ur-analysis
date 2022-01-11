@@ -1,6 +1,7 @@
 from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib as mpl
 import matplotlib.patches as mpatches
 import matplotlib.axes as maxes
 from matplotlib.collections import PatchCollection
@@ -67,7 +68,8 @@ def makeGameboardDisplay(ax: maxes.Axes,
                  xoff=0,
                  show_label=False,
                  singleRow = True,
-                 show_hspans=True) -> None:
+                 show_hspans=True,
+                 reverse=False) -> None:
     if show_hspans:
         __setHspans(ax, fightSaveFields,doubleRollFields)
     gl = prepareLength+fightLength+retreatLength+2
@@ -154,5 +156,7 @@ def makeGameboardDisplay(ax: maxes.Axes,
         if show_label:
             labelC(xy, "end")
 
-    collection = PatchCollection(patches, match_original=True)
+    collection = PatchCollection(patches, match_original=True,)
     ax.add_collection(collection)
+
+
