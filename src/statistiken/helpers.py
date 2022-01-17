@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Union
 import numpy as np
+import math
 import matplotlib as mpl
 import matplotlib.axes as axes
 import matplotlib.patches as mpatches
@@ -10,9 +11,11 @@ def makeVlines(
     x: List[np.float64],
     yVlaues: List[List[np.float64]],
     ls: str,
-    colors: List[str],
+    colors: Union[List[str], str],
     alpha=1.0,
 ):
+    if not isinstance(colors, list):
+        colors = [colors]*len(x)
     if len(yVlaues) > 0:
         for i, a in enumerate(x):
             offset = 1 / ((len(x)) * 5)
@@ -65,7 +68,8 @@ def colorboxplot(
             box_y.append(box.get_ydata()[j])
         box_coords = np.column_stack([box_x, box_y])
         # Alternate between Dark Khaki and Royal Blue
-        ax.add_patch(mpatches.Polygon(box_coords, facecolor=colors[i], alpha=0.5))
+        ax.add_patch(mpatches.Polygon(
+            box_coords, facecolor=colors[i], alpha=0.5))
         # Now draw the median lines back over what we just filled in
         med = bp["medians"][i]
         minimum = min(data[i])
@@ -76,66 +80,70 @@ def colorboxplot(
 
         ax.text(
             med.get_xdata()[0],
-            i + 1,
-            "{} ".format(med.get_xdata()[0]),
+            med.get_ydata()[1],
+            "{:0.03f} ".format(med.get_xdata()[0]),
             horizontalalignment="right",
-            verticalalignment="center",
+            verticalalignment="bottom",
         )
 
         ax.text(
             minimum,
-            i + 1,
-            "{}  ".format(minimum),
+            i+1,
+            "{:0.03f}  ".format(minimum),
             horizontalalignment="right",
-            verticalalignment="center",
+            verticalalignment="bottom",
         )
 
         ax.text(
             np.average(data[i]),
-            i + 1,
-            "  {:0.3f}".format(np.average(data[i])),
+            med.get_ydata()[1],
+            "  {:0.03f}".format(np.average(data[i])),
             horizontalalignment="left",
-            verticalalignment="center",
-            alpha=0.7,
+            verticalalignment="bottom",
+            color="blue",
         )
 
         # Finally, overplot the sample averages, with horizontal alignment
         # in the center of each box
         # ax.plot( np.average(data[i]),i+1,
         #         color='w', marker='|', markersize=12,markeredgecolor='k')
-    makeVlines(ax, medians, yValues, "-", colors)
-    makeVlines(ax, minimums, yValues, "-.", colors)
-    makeVlines(ax, [np.average(data_) for data_ in data], yValues, "--", colors)
+    makeVlines(ax, medians, yValues, "-", "red")
+    makeVlines(ax, [np.average(data_)
+               for data_ in data], yValues, "--", "blue")
+    makeVlines(ax, minimums, yValues, "-.", "green")
 
-    make_bestcaseLine(ax,bestcase)
+    make_bestcaseLine(ax, bestcase)
 
     median_legend = mpl.lines.Line2D(
-        [], [], ls="-", color="grey", label="Spiellänge Median"
+        [], [], ls="-", color="red", label="Spiellänge Median"
     )
     avg_legend = mpl.lines.Line2D(
-        [], [], ls="--", color="grey", label="Spiellänge Durchschnitt"
+        [], [], ls="--", color="blue", label="Spiellänge Durchschnitt"
     )
     fliers_legend = mpl.lines.Line2D(
-        [], [], ls="-.", color="grey", label="Spiellänge Minimum"
+        [], [], ls="-.", color="green", label="Spiellänge Minimum"
     )
 
     ax.legend(handles=[median_legend, avg_legend, fliers_legend])
 
 
-def makeHistogram(ax, data, labels, colors, bestcase=-1):
+def makeHistogram(ax, data, labels, colors, bestcase=-1, fill=True):
     maxBin = max([max(x) for x in data])
     minBin = min([min(x) for x in data])
-    bins = range(minBin, maxBin + 2)
-    ax.hist(data, color=colors[: len(data)], density=True, histtype="step", bins=bins)
-    ax.hist(
-        data,
-        color=colors[: len(data)],
-        label=labels,
-        density=True,
-        histtype="stepfilled",
-        alpha=0.3,
-        bins=bins,
-    )
-    ax.xaxis.grid(True, linestyle="-", which="major", color="lightgrey", alpha=0.5)
-    make_bestcaseLine(ax,bestcase)
+    bins = range(math.floor(minBin), math.ceil(maxBin) + 2)
+    ax.hist(data, color=colors[: len(data)],
+            density=True, histtype="step", bins=bins)
+    if fill:
+        ax.hist(
+            data,
+            color=colors[: len(data)],
+            label=labels,
+            density=True,
+            histtype="stepfilled",
+            alpha=0.3,
+            bins=bins,
+        )
+    ax.xaxis.grid(True, linestyle="-", which="major",
+                  color="lightgrey", alpha=0.5)
+    make_bestcaseLine(ax, bestcase)
     ax.legend(ncol=3)

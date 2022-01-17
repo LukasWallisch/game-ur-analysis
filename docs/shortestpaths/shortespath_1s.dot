@@ -1,0 +1,37 @@
+digraph G {
+    rankdir=LR;
+	size="8,5"
+    node [shape = "record"]
+    pad=0
+    ranksep=".2 equally"
+
+    subgraph cluster_0 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		3 -> 7 -> 11 -> 15[color=blue];
+		label = "3 gewürfelt";
+	}
+    subgraph cluster_1 {
+		node [style=filled];
+		0 -> 4 -> 8 -> 12 [color=blue];
+		label = "3 nicht gewürfelt";
+	}
+
+   0 -> 3 [color=red]
+   4 -> 7 [color=red]
+   8 -> 11 [color=red]
+   12 -> 15 [color=red]
+
+ 
+
+    subgraph cluster_label { 
+        style=invis
+    a [style=invis] ;
+    b [style=invis] ;
+    c [style=invis] ;
+    a -> b [label="3 gewürfelt", color=red] ; 
+    b -> c [label="4 gewürfelt",color=blue] ;
+  }
+   
+}

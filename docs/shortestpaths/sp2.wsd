@@ -1,0 +1,14 @@
+@startuml tmp
+
+start
+
+repeat
+  :würfeln mit 3 und 4;
+  :Spielerauswählen;
+repeat while (Anzahl gewürfelt) is (< 4*Anzahl Steine) not ("= 4*Anzahl Steine")
+
+stop
+
+@enduml
+
+

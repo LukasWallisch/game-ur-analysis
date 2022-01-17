@@ -1,0 +1,9 @@
+digraph G {
+    rankdir=LR;
+	size="8,5"
+    // node [shape = "record"]
+     ranksep=".5 equally"
+
+0 -> "3,4" -> "7,8" -> "11,12" -> 15 
+
+}

@@ -1,0 +1,105 @@
+digraph G {
+    // rankdir=LR;
+	size="8,5"
+
+node []Start
+node []Feld_1
+node []Feld_2
+node []Feld_3
+node []Feld_4
+node []Feld_5
+node []Feld_6
+node []Feld_7
+node []Feld_8
+node []Feld_9
+node []Feld_10
+node []Feld_11
+node []Feld_12
+node []Feld_13
+node []Feld_14
+
+
+Ende -> Ende [label="[1]"]
+
+
+//  0
+Start  ->  Start [label="1/16"]
+Feld_1  ->  Feld_1 [label="1/16"]
+Feld_2  ->  Feld_2 [label="1/16"]
+Feld_3  ->  Feld_3 [label="1/16"]
+Feld_4  ->  Feld_4 [label="1/16"]
+Feld_5  ->  Feld_5 [label="1/16"]
+Feld_6  ->  Feld_6 [label="1/16"]
+Feld_7  ->  Feld_7 [label="1/16"]
+Feld_8  ->  Feld_8 [label="1/16"]
+Feld_9  ->  Feld_9 [label="1/16"]
+Feld_10  ->  Feld_10 [label="1/16"]
+Feld_11  ->  Feld_11 [label="1/16"]
+Feld_12  ->  Feld_12 [label="1/16"]
+Feld_13  ->  Feld_13 [label="1/16"]
+Feld_14  ->  Feld_14 [label="1/16"]
+
+//  1
+Start  ->  Feld_1 [label="1/4"]
+Feld_1 ->  Feld_2 [label="1/4"]
+Feld_2 ->  Feld_3 [label="1/4"]
+Feld_3 ->  Feld_4 [label="1/4"]
+Feld_4 ->  Feld_5 [label="1/4"]
+Feld_5 ->  Feld_6 [label="1/4"]
+Feld_6 ->  Feld_7 [label="1/4"]
+Feld_7 ->  Feld_8 [label="1/4"]
+Feld_8 ->  Feld_9 [label="1/4"]
+Feld_9 ->  Feld_10 [label="1/4"]
+Feld_10 ->  Feld_11 [label="1/4"]
+Feld_11 ->  Feld_12 [label="1/4"]
+Feld_12 ->  Feld_13 [label="1/4"]
+Feld_13 ->  Feld_14 [label="1/4"]
+Feld_14 ->  Ende [label="1/4"]
+
+//  2
+rank=same {
+Start  ->  Feld_2 [label="3/8"]
+Feld_1 ->  Feld_3 [label="3/8"]
+Feld_2 ->  Feld_4 [label="3/8"]
+Feld_3 ->  Feld_5 [label="3/8"]
+Feld_4 ->  Feld_6 [label="3/8"]
+Feld_5 ->  Feld_7 [label="3/8"]
+Feld_6 ->  Feld_8 [label="3/8"]
+Feld_7 ->  Feld_9 [label="3/8"]
+Feld_8 ->  Feld_10 [label="3/8"]
+Feld_9 ->  Feld_11 [label="3/8"]
+Feld_10 ->  Feld_12 [label="3/8"]
+Feld_11 ->  Feld_13 [label="3/8"]
+Feld_12 ->  Feld_14 [label="3/8"]
+Feld_13 ->  Ende [label="3/8"]
+}
+//  3
+Start  -> Feld_3 [label="1/4"]
+Feld_1  -> Feld_4 [label="1/4"]
+Feld_2  -> Feld_5 [label="1/4"]
+Feld_3  -> Feld_6 [label="1/4"]
+Feld_4  -> Feld_7 [label="1/4"]
+Feld_5  -> Feld_8 [label="1/4"]
+Feld_6  -> Feld_9 [label="1/4"]
+Feld_7  -> Feld_10 [label="1/4"]
+Feld_8  -> Feld_11 [label="1/4"]
+Feld_9  -> Feld_12 [label="1/4"]
+Feld_10  -> Feld_13 [label="1/4"]
+Feld_11  -> Feld_14 [label="1/4"]
+Feld_12 ->  Ende [label="1/4"]
+
+//  4
+Start  -> Feld_4 [label="1/16"]
+Feld_1  -> Feld_5 [label="1/16"]
+Feld_2  -> Feld_6 [label="1/16"]
+Feld_3  -> Feld_7 [label="1/16"]
+Feld_4  -> Feld_8 [label="1/16"]
+Feld_5  -> Feld_9 [label="1/16"]
+Feld_6  -> Feld_10 [label="1/16"]
+Feld_7  -> Feld_11 [label="1/16"]
+Feld_8  -> Feld_12 [label="1/16"]
+Feld_9  -> Feld_13 [label="1/16"]
+Feld_10  -> Feld_14 [label="1/16"]
+Feld_11  -> Ende [label="1/16"]
+
+}

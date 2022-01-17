@@ -21,20 +21,27 @@ if __name__ == "__main__":
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2DiceNo0(3), *equalSettings)]*10,
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.D4(), *equalSettings)]*10,
 
-        *[GameSettings([p0, Player( 1, 7, S.RandomStrategy())],  *equalSettings)]*3,
-        *[GameSettings([p0, Player( 1, 7, S.MoveFirstStrategy())], *equalSettings)]*5,
-        *[GameSettings([p0, Player( 1, 7, S.MoveLastStrategy())], *equalSettings)]*5,
-        *[GameSettings([p0, Player( 1, 7, S.ScoreStrategy())], *equalSettings)]*5,
-        *[GameSettings([p0, Player( 1, 7, S.ScoreDoubleRollStrategy())], *equalSettings)]*5,
-        *[GameSettings([p0, Player( 1, 7, S.ScoreThrowOpponentStrategy())], *equalSettings)]*5,
+        # *[GameSettings([p0, Player( 1, 7, S.RandomStrategy())],  *equalSettings)]*5,
+        # *[GameSettings([p0, Player( 1, 7, S.MoveFirstStrategy())], *equalSettings)]*5,
+        # *[GameSettings([p0, Player( 1, 7, S.MoveLastStrategy())], *equalSettings)]*5,
+        # *[GameSettings([p0, Player( 1, 7, S.ScoreStrategy())], *equalSettings)]*5,
+        # *[GameSettings([p0, Player( 1, 7, S.ScoreDoubleRollStrategy())], *equalSettings)]*5,
+        # *[GameSettings([p0, Player( 1, 7, S.ScoreThrowOpponentStrategy())], *equalSettings)]*5,
 
+        *[GameSettings([Player( 1, 1, S.RandomStrategy())],  *equalSettings)]*(420//1),
+        *[GameSettings([Player( 1, 2, S.RandomStrategy())],  *equalSettings)]*(420//2),
+        *[GameSettings([Player( 1, 3, S.RandomStrategy())],  *equalSettings)]*(420//3),
+        *[GameSettings([Player( 1, 4, S.RandomStrategy())],  *equalSettings)]*(420//4),
+        *[GameSettings([Player( 1, 5, S.RandomStrategy())],  *equalSettings)]*(420//5),
+        *[GameSettings([Player( 1, 6, S.RandomStrategy())],  *equalSettings)]*(420//6),
+        *[GameSettings([Player( 1, 7, S.RandomStrategy())],  *equalSettings)]*(420//7),
 
-        # *[GameSettings([Player( 1, 7, S.RandomStrategy())],  *equalSettings)]*5,
-        # *[GameSettings([Player( 1, 7, S.MoveFirstStrategy())], *equalSettings)]*5,
-        # *[GameSettings([Player( 1, 7, S.MoveLastStrategy())], *equalSettings)]*5,
-        # *[GameSettings([Player( 1, 7, S.ScoreStrategy())], *equalSettings)]*5,
-        # *[GameSettings([Player( 1, 7, S.ScoreDoubleRollStrategy())], *equalSettings)]*5,
-        # *[GameSettings([Player( 1, 7, S.ScoreThrowOpponentStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 2, S.RandomStrategy())],  *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 2, S.MoveFirstStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 2, S.MoveLastStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 2, S.ScoreStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 2, S.ScoreDoubleRollStrategy())], *equalSettings)]*5,
+        # *[GameSettings([Player( 1, 2, S.ScoreThrowOpponentStrategy())], *equalSettings)]*5,
     ]
     gs_fastest = [
         # *[GameSettings([Player(0, 7, S.MoveFirstStrategy()), Player(1, 7, S.MoveFirstStrategy())], Dice.MultiD2Dice(4), *equalSettings)]*10,
@@ -50,12 +57,12 @@ if __name__ == "__main__":
         # (GameSettings([p0, Player( 1, 7, S.ScoreThrowOpponentStrategy())], *equalSettings),50),
         # (GameSettings([p0], *equalSettings),20),
     ]
-    runs = 100000
+    runs = 25000
 
 
     delta0 = datetime.now()
     # cf = Multirun.multirunDB(runs,-1, 500, gs)
-    cf = Multirun.multirunDB(runs,10, 100, gs,"random")
+    cf = Multirun.multirunDB(runs,10, 100, gs,"baseline")
 
 
     #5000 [03:37<00:00, 229.91games/s]

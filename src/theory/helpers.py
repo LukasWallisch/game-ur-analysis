@@ -1,4 +1,5 @@
 
+from __future__ import annotations
 from math import atan2,degrees
 from typing import List, Literal, Union
 from matplotlib.collections import PathCollection
@@ -49,7 +50,7 @@ def labelLine(line,align=True,**kwargs):
             kwargs['va'] = 'center'
 
         if 'backgroundcolor' not in kwargs:
-            kwargs['backgroundcolor'] = ax.get_facecolor()
+            kwargs['backgroundcolor'] = "#00000000"
 
         # if 'clip_on' not in kwargs:
         #     kwargs['clip_on'] = True
@@ -61,6 +62,92 @@ def labelLine(line,align=True,**kwargs):
 
         ax.text(x,y,label,**kwargs)
 
+
+def test_annotations(line, **kwargs):
+    if 'color' not in kwargs:
+        kwargs['color'] = line.get_color()
+
+    ax = line.axes
+    xdata = list(line.get_xdata())
+    ydata = list(line.get_ydata())
+
+    for i, x2 in enumerate(xdata[1:]):
+        xy0 = (xdata[i], ydata[i])
+        xy1 = (x2, ydata[i+1])
+
+        label = str(ydata[i+1]-ydata[i])
+        ax.annotate(label, xy=xy0, xycoords='data',
+                    xytext=xy1, textcoords='data',
+                    arrowprops=dict(arrowstyle="<->",
+                                    connectionstyle="bar",
+                                    ec="k",
+                                    shrinkA=0, shrinkB=0,**kwargs))
+
+def labelLine_at_x(line,x:int, align=True, **kwargs):
+
+    ax = line.axes
+    xdata = list(line.get_xdata())
+    ydata = list(line.get_ydata())
+
+    for i, _ in enumerate(xdata[1:]):
+
+        label = str(ydata[i+1]-ydata[i])
+        y = (ydata[i+1]+ydata[i])/2
+
+
+        #Set a bunch of keyword arguments
+        if 'color' not in kwargs:
+            kwargs['color'] = line.get_color()
+
+        if ('horizontalalignment' not in kwargs) and ('ha' not in kwargs):
+            kwargs['ha'] = 'center'
+
+        if ('verticalalignment' not in kwargs) and ('va' not in kwargs):
+            kwargs['va'] = 'center'
+
+        if 'backgroundcolor' not in kwargs:
+            kwargs['backgroundcolor'] =  "#00000000"
+
+        # if 'clip_on' not in kwargs:
+        #     kwargs['clip_on'] = True
+
+        if 'zorder' not in kwargs:
+            kwargs['zorder'] = 2.5
+
+        ax.text(x, y, label, **kwargs)
+def labelLine_at_y(line,y:int, align=True,ignore0=False, **kwargs):
+
+    ax = line.axes
+    xdata = list(line.get_xdata())
+    ydata = list(line.get_ydata())
+
+    for i, _ in enumerate(xdata[1:]):
+        if ignore0 and ydata[i+1]-ydata[i] == 0:
+            continue
+        label = str(ydata[i+1]-ydata[i])
+        x = (xdata[i+1]+xdata[i])/2
+
+
+        #Set a bunch of keyword arguments
+        if 'color' not in kwargs:
+            kwargs['color'] = line.get_color()
+
+        if ('horizontalalignment' not in kwargs) and ('ha' not in kwargs):
+            kwargs['ha'] = 'center'
+
+        if ('verticalalignment' not in kwargs) and ('va' not in kwargs):
+            kwargs['va'] = 'center'
+
+        if 'backgroundcolor' not in kwargs:
+            kwargs['backgroundcolor'] =  "#00000000"
+
+        # if 'clip_on' not in kwargs:
+        #     kwargs['clip_on'] = True
+
+        if 'zorder' not in kwargs:
+            kwargs['zorder'] = 2.5
+
+        ax.text(x, y, label, **kwargs)
 
 def _get_quater_square(x:int,y:int):
     return mpatches.Rectangle( (x-.25,y-.25), .5, .5, ec="darkblue",alpha=.2,fill=None)
@@ -82,10 +169,10 @@ def _get_circle(x:int,y:int,state:Literal["start", "end","turn"]):
     if state=="start":
         patches.append(mpatches.Ellipse((x,y), 1, 1, fill=None))
         patches.append(mpatches.Ellipse((x,y), .8, .8, fill=None))
-    elif state == "end":
+    elif state == "ende":
        patches.append(mpatches.Ellipse((x,y), 1, 1, lw=3, fill=None))
     elif state == "turn":
-       patches.append(mpatches.Ellipse((x,y), .5, .5, lw=2, fill=None, ec="yellow"))
+       patches.append(mpatches.Ellipse((x,y), .5, .5, lw=4, fill=None, ec="yellow"))
     return patches
 
 def _get_five_dots(x:int,y:int,state:Literal["normal", "small"]):
@@ -163,6 +250,7 @@ def _get_starpatches(x:int,y:int):
     offset = np.array((.1, .1))
     fco = "orange"
     fcb = "blue"
+    alpha = .5
 
     patches = []
 
@@ -175,15 +263,15 @@ def _get_starpatches(x:int,y:int):
         for mirror in [1, -1]:
             pos = offset * (1, 1) * coordSign * coordVal * mirror
             ellipse = mpatches.Ellipse(xy + pos,
-                                       0.175, .375, 22.5+45*direction, fc="black")
+                                       0.175, .375, 22.5+45*direction, fc="black", alpha=alpha)
             patches.append(ellipse)
             ellipse = mpatches.Ellipse(xy + pos,
-                                       0.15, .35, 22.5+45*direction, fc=color)
+                                       0.15, .35, 22.5+45*direction, fc=color, alpha=alpha)
             patches.append(ellipse)
 
-    ellipse = mpatches.Ellipse(xy, 0.25, .25, fc="black")
+    ellipse = mpatches.Ellipse(xy, 0.25, .25, fc="black", alpha=alpha)
     patches.append(ellipse)
-    ellipse = mpatches.Ellipse(xy, 0.2, .2, fc=fco)
+    ellipse = mpatches.Ellipse(xy, 0.2, .2, fc=fco, alpha=alpha)
     patches.append(ellipse)
 
     return patches
@@ -210,7 +298,7 @@ def draw_stars(ax:maxes.Axes,x:Union[int,List[int]],y:Union[int,List[int]]):
             for p in _get_starpatches(x_,y_):
                 ax.add_patch(p)
 
-def draw_circles(ax:maxes.Axes,x:Union[int,List[int]],y:Union[int,List[int]],state:Literal["start", "end","turn"]):
+def draw_circles(ax:maxes.Axes,x:Union[int,List[int]],y:Union[int,List[int]],state:Literal["start", "ende","turn"]):
     if not isinstance(x,list):
         x=[x]
     if not isinstance(y,list):
@@ -219,6 +307,7 @@ def draw_circles(ax:maxes.Axes,x:Union[int,List[int]],y:Union[int,List[int]],sta
         for y_ in y:
             for p in _get_circle(x_,y_,state):
                 ax.add_patch(p)
+                ax.text(x_,y_,str(state).upper(),va="center",ha="center",fontweight="bold",fontsize="x-small", zorder=6)
 
 def draw_fives(ax:maxes.Axes,x:Union[int,List[int]],y:Union[int,List[int]],state:Literal["normal", "small"]):
     if not isinstance(x,list):
@@ -280,5 +369,7 @@ def draw_path(ax:maxes.Axes,x,y,color):
 
     for x1, y1, x2, y2 in zip(x,y,x_-x,y_-y):
         ax.arrow(x1, y1, x2, y2, head_width=HEAD_WIDTH, head_length=HEAD_LEN,length_includes_head=True, color=color, ec="#00000055",zorder=5)
+
+
 
     

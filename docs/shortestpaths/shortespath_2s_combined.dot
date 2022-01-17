@@ -1,0 +1,52 @@
+digraph G {
+    // rankdir=LR;
+	size="8,5"
+    // node [shape = "record"]
+     ranksep=".3 equally"
+     node [shape = "plaintext" margin=0,border=0]
+     edge [minlen=2]
+
+00,10,20,03,04 [rank=same]
+00 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >0</TD><TD height="35" width="38">0</TD></TR></TABLE>>]
+01 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >0</TD><TD height="35" width="38">3,4</TD></TR></TABLE>>]
+02 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >0</TD><TD height="35" width="38">7,8</TD></TR></TABLE>>]
+03 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >0</TD><TD height="35" width="38">11,12</TD></TR></TABLE>>]
+04 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >0</TD><TD height="35" width="38">15</TD></TR></TABLE>>]
+
+10 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >3,4</TD><TD height="35" width="38">0</TD></TR></TABLE>>]
+11 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >3,4</TD><TD height="35" width="38">3,4</TD></TR></TABLE>>]
+12 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >3,4</TD><TD height="35" width="38">7,8</TD></TR></TABLE>>]
+13 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >3,4</TD><TD height="35" width="38">11,12</TD></TR></TABLE>>]
+14 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >3,4</TD><TD height="35" width="38">15</TD></TR></TABLE>>]
+
+20 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >7,8</TD><TD height="35" width="38">0</TD></TR></TABLE>>]
+21 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >7,8</TD><TD height="35" width="38">3,4</TD></TR></TABLE>>]
+22 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >7,8</TD><TD height="35" width="38">7,8</TD></TR></TABLE>>]
+23 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >7,8</TD><TD height="35" width="38">11,12</TD></TR></TABLE>>]
+24 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >7,8</TD><TD height="35" width="38">15</TD></TR></TABLE>>]
+
+30 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >11,12</TD><TD height="35" width="38">0</TD></TR></TABLE>>]
+31 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >11,12</TD><TD height="35" width="38">3,4</TD></TR></TABLE>>]
+32 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >11,12</TD><TD height="35" width="38">7,8</TD></TR></TABLE>>]
+33 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >11,12</TD><TD height="35" width="38">11,12</TD></TR></TABLE>>]
+34 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >11,12</TD><TD height="35" width="38">15</TD></TR></TABLE>>]
+
+40 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >15</TD><TD height="35" width="38">0</TD></TR></TABLE>>]
+41 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >15</TD><TD height="35" width="38">3,4</TD></TR></TABLE>>]
+42 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >15</TD><TD height="35" width="38">7,8</TD></TR></TABLE>>]
+43 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >15</TD><TD height="35" width="38">11,12</TD></TR></TABLE>>]
+44 [label= < <TABLE border="0" cellborder="1" cellspacing="0"><TR><TD width="38" >15</TD><TD height="35" width="38">15</TD></TR></TABLE>>]
+
+00 -> 01 -> 02 -> 03 -> 04
+10 -> 11 -> 12 -> 13 -> 14
+20 -> 21 -> 22 -> 23 -> 24
+30 -> 31 -> 32 -> 33 -> 34
+40 -> 41 -> 42 -> 43 -> 44
+
+rank=same {00-> 10 -> 20 -> 30 -> 40}
+rank=same {01-> 11 -> 21 -> 31 -> 41}
+rank=same {02-> 12 -> 22 -> 32 -> 42}
+rank=same {03-> 13 -> 23 -> 33 -> 43}
+rank=same {04-> 14 -> 24 -> 34 -> 44}
+
+}
