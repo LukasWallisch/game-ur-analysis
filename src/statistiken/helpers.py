@@ -1,9 +1,22 @@
 from typing import List, Union
+from os import path
 import numpy as np
 import math
+import json
+import sqlite3
+from datetime import datetime
+from itertools import groupby
+
 import matplotlib as mpl
 import matplotlib.axes as axes
 import matplotlib.patches as mpatches
+from matplotlib.colors import LinearSegmentedColormap
+
+from gameSimulation.jsonDeEncoders import decodingHooks
+
+colors = ["green", "blue", "red", "orange", "purple",
+          "gold", "lime", "magenta", "crimson", "cyan"]
+cmap = LinearSegmentedColormap.from_list("mycmap", colors)
 
 
 def makeVlines(
@@ -56,6 +69,7 @@ def colorboxplot(
     num_boxes = len(data)
     medians = np.empty(num_boxes)
     minimums = np.empty(num_boxes)
+    maximums = np.empty(num_boxes)
     yValues = np.empty((num_boxes, 2))
 
     for i in range(num_boxes):
@@ -73,15 +87,17 @@ def colorboxplot(
         # Now draw the median lines back over what we just filled in
         med = bp["medians"][i]
         minimum = min(data[i])
+        maximum = max(data[i])
 
         minimums[i] = minimum
+        maximums[i] = maximum
         medians[i] = med.get_xdata()[0]
         yValues[i] = med.get_ydata()
 
         ax.text(
             med.get_xdata()[0],
             med.get_ydata()[1],
-            "{:0.03f} ".format(med.get_xdata()[0]),
+            "{:0.01f}  ".format(med.get_xdata()[0]),
             horizontalalignment="right",
             verticalalignment="bottom",
         )
@@ -89,15 +105,22 @@ def colorboxplot(
         ax.text(
             minimum,
             i+1,
-            "{:0.03f}  ".format(minimum),
+            "{:0.0f} ".format(minimum),
             horizontalalignment="right",
-            verticalalignment="bottom",
+            verticalalignment="center",
+        )
+        ax.text(
+            maximum,
+            i+1,
+            " {:0.0f}".format(maximum),
+            horizontalalignment="left",
+            verticalalignment="center",
         )
 
         ax.text(
             np.average(data[i]),
             med.get_ydata()[1],
-            "  {:0.03f}".format(np.average(data[i])),
+            "  {:0.04}".format(np.average(data[i])),
             horizontalalignment="left",
             verticalalignment="bottom",
             color="blue",
@@ -108,8 +131,8 @@ def colorboxplot(
         # ax.plot( np.average(data[i]),i+1,
         #         color='w', marker='|', markersize=12,markeredgecolor='k')
     makeVlines(ax, medians, yValues, "-", "red")
-    makeVlines(ax, [np.average(data_)
-               for data_ in data], yValues, "--", "blue")
+    makeVlines(ax, [np.average(data_) for data_ in data], yValues, "--", "blue")
+    makeVlines(ax, maximums, yValues, "-.", "purple")
     makeVlines(ax, minimums, yValues, "-.", "green")
 
     make_bestcaseLine(ax, bestcase)
@@ -120,11 +143,15 @@ def colorboxplot(
     avg_legend = mpl.lines.Line2D(
         [], [], ls="--", color="blue", label="Spiellänge Durchschnitt"
     )
-    fliers_legend = mpl.lines.Line2D(
+    fliers_min_legend = mpl.lines.Line2D(
         [], [], ls="-.", color="green", label="Spiellänge Minimum"
     )
+    fliers_max_legend = mpl.lines.Line2D(
+        [], [], ls="-.", color="purple", label="Spiellänge Maximum"
+    )
 
-    ax.legend(handles=[median_legend, avg_legend, fliers_legend])
+    ax.legend(handles=[median_legend, avg_legend,
+              fliers_min_legend, fliers_max_legend])
 
 
 def makeHistogram(ax, data, labels, colors, bestcase=-1, fill=True):
@@ -147,3 +174,62 @@ def makeHistogram(ax, data, labels, colors, bestcase=-1, fill=True):
                   color="lightgrey", alpha=0.5)
     make_bestcaseLine(ax, bestcase)
     ax.legend(ncol=3)
+
+
+def getDataFromDB(db_dir: str, db_filename: str):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    delta0 = datetime.now()
+    with sqlite3.connect(db_path) as con:
+        con.row_factory = lambda _, row: list(row)
+        rows_raw = con.execute(
+            """select gameSettingsID,roundcount,stepcount,winners from game"""
+        ).fetchall()
+    delta1 = datetime.now()
+    print("db load finished after {}".format(delta1 - delta0))
+    rows_raw.sort(key=lambda r: r[0])
+    delta2 = datetime.now()
+    print("sort finished after {}".format(delta2 - delta1))
+
+    rows = [list(g) for _, g in groupby(rows_raw, lambda r: r[0])]
+    delta3 = datetime.now()
+    print("groupby finished after {}".format(delta3 - delta2))
+    rows.sort(key=lambda rows_sub: np.median([r for _, r, _, _ in rows_sub]))
+    delta3_1 = datetime.now()
+    print("sort finished after {}".format(delta3_1 - delta1))
+
+    settings = []
+    roundCounts = []
+    stepCounts = []
+    winners = []
+    for sub_row in rows:
+        settings_group = []
+        roundCounts_sub = []
+        stepCounts_sub = []
+        winners_sub = []
+        for s, rc, sc, w in sub_row:
+            settings_group.append(s)
+            roundCounts_sub.append(rc)
+            stepCounts_sub.append(sc)
+            winners_sub.append(json.loads(w))
+        settings.append(min(settings_group) if min(
+            settings_group) == max(settings_group) else -1)
+        roundCounts.append(roundCounts_sub)
+        stepCounts.append(stepCounts_sub)
+        winners.append(winners_sub)
+    delta4 = datetime.now()
+    print("split finished after {}".format(delta4 - delta3_1))
+    return roundCounts, stepCounts, winners, settings
+
+
+def getSettingsFromDB(db_dir, db_filename):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    with sqlite3.connect(db_path) as con:
+        con.row_factory = lambda _, row: list(row)
+        settings = [[p if isinstance(p,int) else json.loads(p, object_hook=decodingHooks) for p in r]
+                    for r in con.execute("""select * from gameSettings""").fetchall()]
+    print("settings loaded")
+    return settings
