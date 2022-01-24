@@ -1,16 +1,10 @@
-import multiprocessing
-import random
 import copy
 from datetime import datetime
 from typing import List, Tuple
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 
-from store2db import createTabels, store_data_2_db
+from .store2db import createTabels, store_data_2_db
 from .GameUr import GameUr
 from .GameSettings import GameSettings
-from multiprocessing import Process, Queue
 import multiprocessing as mp
 import tqdm
 
