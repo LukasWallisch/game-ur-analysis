@@ -3,9 +3,9 @@ from os import path
 from datetime import datetime
 from typing import Dict, List
 
-from gameSimulation.GameSettings import GameSettings
-from gameSimulation.GameUr import GameUr, Player, Dice, GameUrDTO
-import gameSimulation.Strategies as S
+from .GameSettings import GameSettings
+from .GameUr import GameUr, Player, Dice, GameUrDTO
+from . import Strategies as S
 
 
 
