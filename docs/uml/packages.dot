@@ -1,0 +1,40 @@
+digraph "packages" {
+rankdir=BT
+charset="utf-8"
+"game-ur-analysis-prework.src.codeGameSimulation" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.Dice" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.Dice", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameSettings" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.GameSettings", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameUr" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.GameUr", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.History" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.History", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.Multirun" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.Multirun", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.Player" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.Player", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.Strategies" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.Strategies", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.constants" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.constants", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.gameboard", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Stone" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.gameboard.Stone", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.jsonDeEncoders" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.jsonDeEncoders", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.store2db" [color="aliceblue", label="game-ur-analysis-prework.src.codeGameSimulation.store2db", shape="box", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameSettings" -> "game-ur-analysis-prework.src.codeGameSimulation.Strategies" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameSettings" -> "game-ur-analysis-prework.src.codeGameSimulation.jsonDeEncoders" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameUr" -> "game-ur-analysis-prework.src.codeGameSimulation.GameSettings" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameUr" -> "game-ur-analysis-prework.src.codeGameSimulation.Player" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameUr" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameUr" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Stone" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.Multirun" -> "game-ur-analysis-prework.src.codeGameSimulation.GameSettings" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.Multirun" -> "game-ur-analysis-prework.src.codeGameSimulation.GameUr" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.Multirun" -> "game-ur-analysis-prework.src.codeGameSimulation.store2db" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.Strategies" -> "game-ur-analysis-prework.src.codeGameSimulation.Player" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.Strategies" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Stone" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Stone" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.jsonDeEncoders" -> "game-ur-analysis-prework.src.codeGameSimulation.Dice" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.jsonDeEncoders" -> "game-ur-analysis-prework.src.codeGameSimulation.GameSettings" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.jsonDeEncoders" -> "game-ur-analysis-prework.src.codeGameSimulation.Player" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.store2db" -> "game-ur-analysis-prework.src.codeGameSimulation.GameSettings" [arrowhead="open", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.store2db" -> "game-ur-analysis-prework.src.codeGameSimulation.GameUr" [arrowhead="open", arrowtail="none"];
+}

@@ -1,0 +1,71 @@
+digraph "classes" {
+rankdir=BT
+charset="utf-8"
+node [fontname="Arial",style="bold", shape="box"]
+subgraph cluster_aktive{
+    label="Game"
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field.Field" [fillcolor="aliceblue", fontcolor="black", label="Field", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field.FieldFullError" [fillcolor="aliceblue", fontcolor="red", label="FieldFullError", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameSettings.GameSettings" [fillcolor="aliceblue", fontcolor="black", label="GameSettings", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameUr.GameUr" [fillcolor="aliceblue", fontcolor="black", label="GameUr", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.GameUr.GameUrDTO" [fillcolor="aliceblue", fontcolor="black", label="GameUrDTO", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard.Gameboard" [fillcolor="aliceblue", fontcolor="black", label="Gameboard", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.Strategies.Strategy" [fillcolor="aliceblue", fontcolor="black", label="Strategy", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.MoveFirstStrategy" [fillcolor="aliceblue", fontcolor="black", label="MoveFirstStrategy", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.MoveLastStrategy" [fillcolor="aliceblue", fontcolor="black", label="MoveLastStrategy", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard.MoveTuple" [fillcolor="aliceblue", fontcolor="black", label="MoveTuple", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.Player.Player" [fillcolor="aliceblue", fontcolor="black", label="Player", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.jsonDeEncoders.PlayerEncoder" [fillcolor="aliceblue", fontcolor="black", label="PlayerEncoder", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.ScoreDoubleRollStrategy" [fillcolor="aliceblue", fontcolor="black", label="ScoreDoubleRollStrategy", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.ScoreStrategy" [fillcolor="aliceblue", fontcolor="black", label="ScoreStrategy", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.ScoreThrowOpponentStrategy" [fillcolor="aliceblue", fontcolor="black", label="ScoreThrowOpponentStrategy", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Stone.Stone" [fillcolor="aliceblue", fontcolor="black", label="Stone", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.RandomStrategy" [fillcolor="aliceblue", fontcolor="black", label="RandomStrategy", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.Dice.Dice" [fillcolor="aliceblue", fontcolor="black", label="Dice", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.D2" [fillcolor="aliceblue", fontcolor="black", label="D2", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.MultiD2Dice" [fillcolor="aliceblue", fontcolor="black", label="MultiD2Dice", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.MultiD2DiceNo0" [fillcolor="aliceblue", fontcolor="black", label="MultiD2DiceNo0", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.D4" [fillcolor="aliceblue", fontcolor="black", label="D4", style="filled"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.D6" [fillcolor="aliceblue", fontcolor="black", label="D6", style="filled"];
+rank=same {"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard.Gameboard" -> "game-ur-analysis-prework.src.codeGameSimulation.GameUr.GameUr" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__gb", style="solid"];}
+rank=same {"game-ur-analysis-prework.src.codeGameSimulation.Dice.Dice" -> "game-ur-analysis-prework.src.codeGameSimulation.GameSettings.GameSettings" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__dice", style="solid"];}
+}
+subgraph cluster_history{
+label="History"
+"game-ur-analysis-prework.src.codeGameSimulation.History.History" [fillcolor="aliceblue", fontcolor="black", label="History", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.Round" [fillcolor="aliceblue", fontcolor="black", label="Round", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.Step" [fillcolor="aliceblue", fontcolor="black", label="Step", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.Field" [fillcolor="aliceblue", fontcolor="black", label="Field", style="filled"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.Stone" [fillcolor="aliceblue", fontcolor="black", label="Stone", style="filled"];
+}
+
+"game-ur-analysis-prework.src.codeGameSimulation.Player.Player" -> "game-ur-analysis-prework.src.codeGameSimulation.GameSettings.GameSettings" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__players", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.Player.Player" -> "game-ur-analysis-prework.src.codeGameSimulation.History.History" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__winner", style="solid"];
+
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.D2" -> "game-ur-analysis-prework.src.codeGameSimulation.Dice.Dice" [arrowhead="empty", arrowtail="none"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.D4" -> "game-ur-analysis-prework.src.codeGameSimulation.Dice.Dice" [arrowhead="empty", arrowtail="none"];
+// // "game-ur-analysis-prework.src.codeGameSimulation.Dice.D6" -> "game-ur-analysis-prework.src.codeGameSimulation.Dice.Dice" [arrowhead="empty", arrowtail="none"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.MultiD2Dice" -> "game-ur-analysis-prework.src.codeGameSimulation.Dice.D2" [arrowhead="empty", arrowtail="none"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Dice.MultiD2DiceNo0" -> "game-ur-analysis-prework.src.codeGameSimulation.Dice.D2" [arrowhead="empty", arrowtail="none"];
+
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.MoveFirstStrategy" -> "game-ur-analysis-prework.src.codeGameSimulation.Strategies.Strategy" [arrowhead="empty", arrowtail="none"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.MoveLastStrategy" -> "game-ur-analysis-prework.src.codeGameSimulation.Strategies.Strategy" [arrowhead="empty", arrowtail="none"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.RandomStrategy" -> "game-ur-analysis-prework.src.codeGameSimulation.Strategies.Strategy" [arrowhead="empty", arrowtail="none"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.ScoreDoubleRollStrategy" -> "game-ur-analysis-prework.src.codeGameSimulation.Strategies.Strategy" [arrowhead="empty", arrowtail="none"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.ScoreStrategy" -> "game-ur-analysis-prework.src.codeGameSimulation.Strategies.Strategy" [arrowhead="empty", arrowtail="none"];
+// "game-ur-analysis-prework.src.codeGameSimulation.Strategies.ScoreThrowOpponentStrategy" -> "game-ur-analysis-prework.src.codeGameSimulation.Strategies.Strategy" [arrowhead="empty", arrowtail="none"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameSettings.GameSettings" -> "game-ur-analysis-prework.src.codeGameSimulation.GameUr.GameUr" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__gs", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.GameSettings.GameSettings" -> "game-ur-analysis-prework.src.codeGameSimulation.History.History" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__gbs", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.Round" -> "game-ur-analysis-prework.src.codeGameSimulation.History.History" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__rounds", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.Step" -> "game-ur-analysis-prework.src.codeGameSimulation.History.Round" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__steps", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.Field" -> "game-ur-analysis-prework.src.codeGameSimulation.History.Step" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__fields", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.Stone" -> "game-ur-analysis-prework.src.codeGameSimulation.History.Field" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__stones", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.History.History" -> "game-ur-analysis-prework.src.codeGameSimulation.GameUr.GameUr" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__history", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.Player.Player" -> "game-ur-analysis-prework.src.codeGameSimulation.History.Step" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__activePlayer", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.Player.Player" -> "game-ur-analysis-prework.src.codeGameSimulation.History.Stone" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__player", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.Strategies.Strategy" -> "game-ur-analysis-prework.src.codeGameSimulation.Player.Player" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__strategy", style="solid"];
+"game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field.Field" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard.Gameboard" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="__fields", style="solid"];
+// "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field.Field" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard.MoveTuple" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="srcField", style="solid"];
+// "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Field.Field" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard.MoveTuple" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="destField", style="solid"];
+// "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Stone.Stone" -> "game-ur-analysis-prework.src.codeGameSimulation.gameboard.Gameboard.MoveTuple" [arrowhead="diamond", arrowtail="none", fontcolor="darkgreen", label="stone", style="solid"];
+}
