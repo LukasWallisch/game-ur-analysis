@@ -44,6 +44,12 @@ def runGameDB(gs: GameSettings):
     g.run(1000)
     return g.getStonesHistory4db()
 
+
+def runGameDBNoStoneHistory(gs: GameSettings):
+    g = GameUr(gs,True)
+    g.run(1000)
+    return g.getStonesHistory4db()
+
 def runGameDBfastest(settings:Tuple[GameSettings,int]):
     gs,fastest = settings
     g = GameUr(gs)
@@ -79,7 +85,8 @@ def multirun(n: int, gamesPerChunk:int, gs: List[GameSettings],forJson:bool):
     #     h.extend(h_sub)
     return results
 
-def multirunDB(n: int,processes:int, gamesPerChunk:int, gs: List[GameSettings],db_name_suffix:str):
+
+def multirunDB(n: int, processes: int, gamesPerChunk: int, gs: List[GameSettings], db_dir: str, db_filename: str):
     if processes == -1 or processes >= mp.cpu_count():
         PROCESSES = mp.cpu_count()
     else:
@@ -92,7 +99,7 @@ def multirunDB(n: int,processes:int, gamesPerChunk:int, gs: List[GameSettings],d
     print("chunks:", CHUNKS)
     print("gamePerChunk:", gamesPerChunk)
     print("gamesettings:", len(gs))
-    createTabels(db_name_suffix)
+    createTabels(db_dir, db_filename)
     with mp.Pool(PROCESSES) as pool:
         chunksFinished = 0
         for i,sub_gs in enumerate(gs):
@@ -101,7 +108,38 @@ def multirunDB(n: int,processes:int, gamesPerChunk:int, gs: List[GameSettings],d
             for x in tqdm.tqdm(pool.imap_unordered(runGameDB, [sub_gs for _ in range(n)], gamesPerChunk), total=n, unit="games"):
                 sub_results.append(x)
             chunksFinished += 1
-            store_data_2_db({"gs": sub_gs, "history": sub_results},db_name_suffix)
+            store_data_2_db(
+                {"gs": sub_gs, "history": sub_results}, db_dir, db_filename)
+    
+    # h = []
+    # for h_sub in results:
+    #     h.extend(h_sub)
+    return chunksFinished
+
+def multirunDBNoStoneHistory(n: int,processes:int, gamesPerChunk:int, gs: List[GameSettings],db_dir:str,db_filename:str):
+    if processes == -1 or processes >= mp.cpu_count():
+        PROCESSES = mp.cpu_count()
+    else:
+        PROCESSES = processes
+    CHUNKS = n//gamesPerChunk
+    
+
+    # print("processes:",PROCESSES)
+    # print("total Games:", gamesPerChunk*CHUNKS)
+    print("chunks:", CHUNKS)
+    print("gamePerChunk:", gamesPerChunk)
+    print("gamesettings:", len(gs))
+    createTabels(db_dir, db_filename)
+    with mp.Pool(PROCESSES) as pool:
+        chunksFinished = 0
+        for i,sub_gs in enumerate(gs):
+            # print("for gs {}/{}".format(i+1, len(gs)))
+            sub_results =[]
+            for x in tqdm.tqdm(pool.imap_unordered(runGameDBNoStoneHistory, [sub_gs for _ in range(n)], gamesPerChunk), total=n, unit="games", desc="run for gs {}/{}".format(i+1, len(gs))):
+                sub_results.append(x)
+            chunksFinished += 1
+            store_data_2_db(
+                {"gs": sub_gs, "history": sub_results}, db_dir, db_filename)
     
     # h = []
     # for h_sub in results:
@@ -109,7 +147,7 @@ def multirunDB(n: int,processes:int, gamesPerChunk:int, gs: List[GameSettings],d
     return chunksFinished
 
 
-def multirunDBSearchforFastest(n: int,processes:int, gamesPerChunk:int, gs: List[Tuple[GameSettings,int]],updateFastesNtimes:int =0 ):
+def multirunDBSearchforFastest(n: int, processes: int, gamesPerChunk: int, gs: List[Tuple[GameSettings, int]], db_dir: str, db_filename: str, updateFastesNtimes: int = 0):
     if processes == -1 or processes >= mp.cpu_count():
         PROCESSES = mp.cpu_count()
     else:
@@ -124,7 +162,7 @@ def multirunDBSearchforFastest(n: int,processes:int, gamesPerChunk:int, gs: List
     print("chunks:", CHUNKS)
     print("gamePerChunk:", gamesPerChunk)
     print("gamesettings:", len(gs))
-    createTabels("fastest")
+    createTabels(db_dir, db_filename)
     with mp.Pool(PROCESSES) as pool:
         chunksFinished = 0
         for i,gs_ in enumerate(gs):
@@ -140,7 +178,8 @@ def multirunDBSearchforFastest(n: int,processes:int, gamesPerChunk:int, gs: List
                     if new_fastest < current_fastest:
                         current_fastest = new_fastest
             chunksFinished += 1
-            store_data_2_db({"gs": sub_gs, "history": sub_results},"fastest")
+            store_data_2_db(
+                {"gs": sub_gs, "history": sub_results}, db_dir, db_filename)
     
     # h = []
     # for h_sub in results:

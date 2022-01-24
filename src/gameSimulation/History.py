@@ -212,7 +212,10 @@ class Step:
 
     @classmethod
     def fromGB(cls, gb: GB.Gameboard, stepId: int, diceRoll: int, moveDist: int, activePlayer: P.Player):
-        fields = [Field.fromGBField(f) for f in gb.getFields()]
+        if gb:
+            fields = [Field.fromGBField(f) for f in gb.getFields()]
+        else:
+            fields =[]
         return cls(fields, stepId, diceRoll, moveDist, activePlayer)
 
     def getInfo(self, playerCount: int = 1) -> str:

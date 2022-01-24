@@ -1,5 +1,5 @@
 import sqlite3
-import json
+from os import path
 from datetime import datetime
 from typing import Dict, List
 
@@ -17,11 +17,12 @@ def dict_factory(cursor, row):
     return d
 
 
-def createTabels(db_file_name_suffix:str):
-    if db_file_name_suffix == "":
-        con = sqlite3.connect("D:/Uni/BA/data/gameHistories.db")
-    else:
-        con = sqlite3.connect("D:/Uni/BA/data/gameHistories_{}.db".format(db_file_name_suffix))
+def createTabels(db_dir: str, db_filename: str = ""):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    print(db_path)
+    con = sqlite3.connect(db_path)
     con.row_factory = dict_factory
 
     con.execute('''CREATE TABLE IF NOT EXISTS game ( 
@@ -53,11 +54,11 @@ def createTabels(db_file_name_suffix:str):
     con.commit
 
 
-def store_data_2_db(data:Dict[GameSettings,List[GameUrDTO]], db_file_name_suffix:str):
-    if db_file_name_suffix == "":
-        con = sqlite3.connect("D:/Uni/BA/data/gameHistories.db")
-    else:
-        con = sqlite3.connect("D:/Uni/BA/data/gameHistories_{}.db".format(db_file_name_suffix))
+def store_data_2_db(data: Dict[GameSettings, List[GameUrDTO]], db_dir: str, db_filename: str = ""):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    con = sqlite3.connect(db_path)
     con.row_factory = dict_factory
 
     gs: GameSettings = data["gs"]
@@ -72,7 +73,7 @@ def store_data_2_db(data:Dict[GameSettings,List[GameUrDTO]], db_file_name_suffix
 
     if any([gs == gs_ for gs_ in gss]):
         gs_index = gss.index(gs)
-        print("use existing gs")
+        # print("use existing gs")
     else:
         gs_index = max(gsIDs)+1
         print("new gs")

@@ -42,12 +42,13 @@ class GameUrDTO:
 
 
 class GameUr:
-    def __init__(self, gs: GameSettings) -> None:
+    def __init__(self, gs: GameSettings, short_history=False) -> None:
         self.__gs = gs
         self.__gb = GB.Gameboard(gs)
         self.__dice = gs.getDice()
         self.__players = gs.getPlayers()
         self.__history = H.History(self.__gb, self.__gs)
+        self.__short_history = short_history
 
     def run(self, maxRounds: int = 0):
         gameKeepRunning = True
@@ -56,7 +57,6 @@ class GameUr:
             currentRound += 1
             gameKeepRunning = self.processRound()
         self.__history.saveWinner(self.getWinner())
-
     def reset(self):
         self.__gb = GB.Gameboard(self.__gs)
         self.__dice = self.__gs.getDice()
@@ -148,7 +148,10 @@ class GameUr:
                     if result != []:
                         raise RuntimeError(
                             "A Throw Move can't produce a Throwmove")
-
-        self.__history.saveStep(self.__gb, diceRoll, moveDist, player)
+        if self.__short_history:
+            self.__history.saveStep(None, diceRoll, moveDist, player)
+        else:
+            self.__history.saveStep(self.__gb, diceRoll, moveDist, player)
         # self.__history.printLastStep()
         return landedOnDoubleRoll
+
