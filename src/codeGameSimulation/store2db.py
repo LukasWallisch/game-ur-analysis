@@ -1,8 +1,13 @@
 import sqlite3
+import json
 from os import path
 from datetime import datetime
+from itertools import groupby
 from typing import Dict, List
+import numpy as np
 
+
+from codeGameSimulation.jsonDeEncoders import decodingHooks
 from .GameSettings import GameSettings
 from .GameUr import GameUr, Player, Dice, GameUrDTO
 from . import Strategies as S
@@ -115,6 +120,99 @@ def store_data_2_db(data: Dict[GameSettings, List[GameUrDTO]], db_dir: str, db_f
                     [[gs_index, *g.dbValues()] for g in data["history"]])
 
     con.commit()
+
+
+def getGameFromDB(gameID: int, db_dir: str, db_filename: str):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    delta0 = datetime.now()
+    sqlite3.register_converter("text", lambda s: json.loads(s))
+    with sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES) as con:
+        con.row_factory = sqlite3.Row
+        rows_raw = con.execute(
+            """select * from game where gameID==(?)""", [gameID]
+        ).fetchone()
+    return rows_raw
+
+
+def getDataFromDB(db_dir: str, db_filename: str):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    delta0 = datetime.now()
+    with sqlite3.connect(db_path) as con:
+        con.row_factory = lambda _, row: list(row)
+        rows_raw = con.execute(
+            """select gameID, gameSettingsID,roundcount,stepcount,winners from game"""
+        ).fetchall()
+    delta1 = datetime.now()
+    print("db load finished after {}".format(delta1 - delta0))
+
+    rows_raw.sort(key=lambda r: r[1])
+    delta2 = datetime.now()
+    print("sort finished after {}".format(delta2 - delta1))
+
+    rows = [list(g) for _, g in groupby(rows_raw, lambda r: r[1])]
+    delta3 = datetime.now()
+    print("groupby finished after {}".format(delta3 - delta2))
+
+    rows.sort(key=lambda rows_sub: np.median([r for _, _, r, _, _ in rows_sub]))
+    delta3_1 = datetime.now()
+    print("sort finished after {}".format(delta3_1 - delta1))
+
+    ids = []
+    settings = []
+    roundCounts = []
+    stepCounts = []
+    winners = []
+    for sub_row in rows:
+        ids_sub = []
+        settings_group = []
+        roundCounts_sub = []
+        stepCounts_sub = []
+        winners_sub = []
+        for i, s, rc, sc, w in sub_row:
+            ids_sub.append(i)
+            settings_group.append(s)
+            roundCounts_sub.append(rc)
+            stepCounts_sub.append(sc)
+            winners_sub.append(json.loads(w))
+
+        ids.append(ids_sub)
+        settings.append(min(settings_group) if min(
+            settings_group) == max(settings_group) else -1)
+        roundCounts.append(roundCounts_sub)
+        stepCounts.append(stepCounts_sub)
+        winners.append(winners_sub)
+    delta4 = datetime.now()
+    print("split finished after {}".format(delta4 - delta3_1))
+    return ids, roundCounts, stepCounts, winners, settings
+
+
+def getSettingsFromDB(db_dir, db_filename):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    with sqlite3.connect(db_path) as con:
+        con.row_factory = lambda _, row: list(row)
+        settings = [[p if isinstance(p, int) else json.loads(p, object_hook=decodingHooks) for p in r]
+                    for r in con.execute("""select * from gameSettings""").fetchall()]
+    print("settings loaded")
+    return settings
+
+
+def getGSFromDB(db_dir, db_filename):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    with sqlite3.connect(db_path) as con:
+        con.row_factory = sqlite3.Row
+        settings = [GameSettings.fromDB(r)
+                    for r in con.execute("""select * from gameSettings""").fetchall()]
+    print("settings loaded")
+    return settings
+
 
 
 if __name__ == "__main__":
