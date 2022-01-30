@@ -27,6 +27,8 @@ class Strategy(object):
             return ScoreDoubleRollStrategy()
         elif name == "Score_TO":
             return ScoreThrowOpponentStrategy()
+        elif name == "Score_FS":
+            return ScoreSaveFieldStrategy()
         else:
             raise Exception("Unknown Strategy name")
 
@@ -118,8 +120,7 @@ class ScoreDoubleRollStrategy(Strategy):
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
-            scores = [(m.destField.getDoubleRoll())*100+
-                      (m.destField.getPosition())
+            scores = [(m.destField.getDoubleRoll())*100
                        for m in possibleMoves]
             return possibleMoves[scores.index(np.max(scores))]
         else:
@@ -136,6 +137,24 @@ class ScoreThrowOpponentStrategy(Strategy):
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
             scores = [(m.destField.wouldThrowOpponent(player))*100 +
+                      (m.destField.getPosition())
+                       for m in possibleMoves]
+            return possibleMoves[scores.index(np.max(scores))]
+        else:
+            return None
+
+class ScoreSaveFieldStrategy(Strategy):
+    def __init__(self) -> None:
+        self.__name = "Score_FS"
+        super().__init__()
+
+    def getName(self) -> str:
+        return self.__name
+
+    def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
+        possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
+        if len(possibleMoves) > 0:
+            scores = [(m.destField.getIsSave())*100 +
                       (m.destField.getPosition())
                        for m in possibleMoves]
             return possibleMoves[scores.index(np.max(scores))]
