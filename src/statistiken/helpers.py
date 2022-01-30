@@ -1,4 +1,4 @@
-from typing import List, Union,Literal
+from typing import List, Union, Literal
 from os import path
 import numpy as np
 import math
@@ -50,13 +50,15 @@ def makeVlines(
         for i, a in enumerate(x):
             ax.axvline(a, color=colors[i], ls=ls, alpha=alpha)
 
+
 def setup_grid(ax):
     majorLocator = mt.MultipleLocator(5)
     minorLocator = mt.MultipleLocator(1)
     ax.xaxis.set_major_locator(majorLocator)
     ax.xaxis.set_minor_locator(minorLocator)
-    ax.grid( b=True, axis="x", which='major', color='grey', alpha=.5, linestyle='-')
-    ax.grid(b=True,axis="x", which='minor', color='grey', alpha=.3, linestyle='--')
+    ax.grid(b=True, axis="x", which='major', color='grey', alpha=.5, linestyle='-')
+    ax.grid(b=True, axis="x", which='minor', color='grey', alpha=.3, linestyle='--')
+
 
 def make_bestcaseLine(ax, bestcase=-1):
     if bestcase != -1:
@@ -75,9 +77,9 @@ def make_bestcaseLine(ax, bestcase=-1):
 def colorboxplot(
     data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, ncol=2
 ) -> List[np.float64]:
-    
+
     setup_grid(ax)
-    
+
     medianprops = dict(linestyle="-.", linewidth=0, color="firebrick")
     bp = ax.boxplot(
         data, 0, "|", False, labels=labels, medianprops=medianprops, autorange=True,  whis=(1, 99)
@@ -196,9 +198,7 @@ def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str
     ax.legend(ncol=3)
 
 
-
-
-def zeichneErrechnetenWert(ax: axes.Axes, rs: Literal["r", "s"], multiplikator: int = 1, exactFinish = True):
+def zeichneErrechnetenWert(ax: axes.Axes, rs: Literal["r", "s"], multiplikator: int = 1, exactFinish=True):
     if exactFinish:
         if rs == "r":
             val = 8.391927856222578
@@ -233,7 +233,8 @@ def scale_color(rgb, scale):
     # manipulate h, l, s values and return as rgb
     return colorsys.hls_to_rgb(h, min(1, l * scale), s=min(1, s * scale))
 
-def drawGame(db_row: sqlite3.Row, gs: GameSettings, showDiceRoll=True):
+
+def drawGame(db_row: sqlite3.Row, gs: GameSettings, figsize=[18, 8], showDiceRoll=True):
     stepLineOcc = 0.1
     stepcount = len(db_row["roundID"])
     roundIDsLabels = list(set(db_row["roundID"]))
@@ -247,7 +248,7 @@ def drawGame(db_row: sqlite3.Row, gs: GameSettings, showDiceRoll=True):
         mosaic.append(["dice"])
         height_ratios.append(1)
 
-    fig, ax_dict = plt.subplot_mosaic(mosaic, figsize=[30, 10], layout="constrained", gridspec_kw={'height_ratios': height_ratios})
+    fig, ax_dict = plt.subplot_mosaic(mosaic, figsize=figsize, layout="constrained", gridspec_kw={'height_ratios': height_ratios})
 
     for ax_name in ax_dict:
         ax = ax_dict[ax_name]
@@ -304,7 +305,7 @@ def drawGame(db_row: sqlite3.Row, gs: GameSettings, showDiceRoll=True):
         ax.set_axisbelow(True)
         ax.grid(zorder=0)
         md = ax.bar(range(1, len(db_row["roundID"])), db_row["moveDist"][1:], alpha=1, label="gezogen", width=.75)
-        dr = ax.bar(range(1, len(db_row["roundID"])), db_row["diceRoll"][1:], alpha=1, label="gewürfelt", width=.75,ec="black",color="none")
+        dr = ax.bar(range(1, len(db_row["roundID"])), db_row["diceRoll"][1:], alpha=1, label="gewürfelt", width=.75, ec="black", color="none")
 
         # md = ax.bar(np.arange(.8, len(db_row["roundID"])-.2), db_row["moveDist"][1:], alpha=1, label="gezogen", width=.4)
         # dr = ax.bar(np.arange(1.2, len(db_row["roundID"])+.2), db_row["diceRoll"][1:], alpha=1, label="gewürfelt", width=.4)

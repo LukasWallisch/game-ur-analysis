@@ -96,7 +96,7 @@ class Field(object):
                 # Wenn auf einem SaveField schon ein Stein liegt kann kein anderer Stein darauf ziehen.
                 if self.__isSave:
                     return False
-            # Der Spieler kann sich nicht sebst werfen
+            # Der Spieler kann sich nicht selbst werfen
                 if player in players:
                     if players.count(player) >= self.__maxStones:
                         return False
