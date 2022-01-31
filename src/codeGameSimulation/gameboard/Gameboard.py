@@ -62,11 +62,11 @@ class Gameboard:
 
     def getPossibleMoveTuples(self, player: Player, diceRoll: int) -> List[MoveTuple]:
         possibleMoves: List[Stone] = []
-        for field in self.__Fields:
-            for stone in field.getStones():
+        for srcField in self.__Fields:
+            for stone in srcField.getStones():
                 if stone.getPlayer() == player:
-                    destField = self.isMovePossible(field, player, diceRoll)
+                    destField = self.isMovePossible(srcField, player, diceRoll)
                     if destField != None:
                         possibleMoves.append(
-                            MoveTuple(stone, field, destField))
+                            MoveTuple(stone, srcField, destField))
         return possibleMoves

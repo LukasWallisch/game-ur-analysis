@@ -135,6 +135,19 @@ def getGameFromDB(gameID: int, db_dir: str, db_filename: str):
         ).fetchone()
     return rows_raw
 
+def getHistoryFromDB(db_dir: str, db_filename: str):
+    if db_filename == "":
+        db_filename = "gameHistories"
+    db_path = path.join(db_dir, db_filename+".db")
+    delta0 = datetime.now()
+    sqlite3.register_converter("text", lambda s: json.loads(s))
+    with sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES) as con:
+        con.row_factory = sqlite3.Row
+        rows_raw = con.execute(
+            """select stones from game """
+        ).fetchall()
+    return rows_raw
+
 
 def getDataFromDB(db_dir: str, db_filename: str):
     if db_filename == "":

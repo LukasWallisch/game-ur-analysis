@@ -174,11 +174,13 @@ def colorboxplot(
     return medians
 
 
-def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, fill=True):
+def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, fill=True, border=True, ncol=2):
+    setup_grid(ax)
     maxBin = max([max(x) for x in data])
     minBin = min([min(x) for x in data])
     bins = range(math.floor(minBin), math.ceil(maxBin) + 2)
-    ax.hist(data, color=colors[: len(data)],
+    if border:
+        ax.hist(data, color=colors[: len(data)],
             density=True, histtype="step", bins=bins, align="right")
     if fill:
         ax.hist(
@@ -191,11 +193,11 @@ def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str
             bins=bins,
             align="right"
         )
-    ax.xaxis.grid(True, linestyle="-", which="major",
-                  color="lightgrey", alpha=0.5)
+    # ax.xaxis.grid(True, linestyle="-", which="major",
+    #               color="lightgrey", alpha=0.5)
     make_bestcaseLine(ax, bestcase)
     ax.yaxis.set_major_formatter(mt.PercentFormatter())
-    ax.legend(ncol=3)
+    ax.legend(ncol=ncol)
 
 
 def zeichneErrechnetenWert(ax: axes.Axes, rs: Literal["r", "s"], multiplikator: int = 1, exactFinish=True):
@@ -234,7 +236,7 @@ def scale_color(rgb, scale):
     return colorsys.hls_to_rgb(h, min(1, l * scale), s=min(1, s * scale))
 
 
-def drawGame(db_row: sqlite3.Row, gs: GameSettings, figsize=[18, 8], showDiceRoll=True):
+def drawGame(db_row: sqlite3.Row, gs: GameSettings, figsize=[18, 8], prefix_graphics="", showDiceRoll=True):
     stepLineOcc = 0.1
     stepcount = len(db_row["roundID"])
     roundIDsLabels = list(set(db_row["roundID"]))
@@ -277,7 +279,8 @@ def drawGame(db_row: sqlite3.Row, gs: GameSettings, figsize=[18, 8], showDiceRol
             else:
                 ax.axvspan(i-0.5, i+0.5, facecolor=facecolor, alpha=stepLineOcc)
 
-    stone_colors = [[scale_color(mc.to_rgb(colors[i]), sc) for sc in list(np.linspace(.4, 1.5, p.getStoneCount()))] for i, p in enumerate(gs.getPlayers())]
+    stone_colors = [[scale_color(mc.to_rgb(colors[i]), sc) for sc in list(np.linspace(.6, 1.5, p.getStoneCount()))] for i, p in enumerate(gs.getPlayers())]
+
     ax_game: axes.Axes = ax_dict["game"]
     gbd.makeGameboardDisplay(ax_game, *list(gs.getFieldsSettings().values()), xoff=1.5, show_hspans=False)
     ax_game.set_yticks(range(0, 16), ["start"]+list(range(1, 15))+["end"])
@@ -299,6 +302,7 @@ def drawGame(db_row: sqlite3.Row, gs: GameSettings, figsize=[18, 8], showDiceRol
 
     ax_game.legend(ncol=len(gs.getPlayers())+sum([p.getStoneCount() for p in gs.getPlayers()]), handletextpad=.3, columnspacing=1, loc="upper left")
     ax_game.set_title("Bewegung der Spielsteine $St_{j,i}:$Spieler $j$ , Stein $i$ im Verlauf eines Spiels")
+    fig.suptitle(prefix_graphics,fontsize=16)
 
     if showDiceRoll:
         ax = ax_dict["dice"]
@@ -312,6 +316,7 @@ def drawGame(db_row: sqlite3.Row, gs: GameSettings, figsize=[18, 8], showDiceRol
         ax.set_ybound(-.5, 5)
         ax.set_ylim(-.5, 5)
         ax.set_yticks(range(0, 5), list(range(0, 5)))
+        ax.set_title("Gewürfelte Werte und gezogene Distanz Verlauf eines Spiels")
 
         ax.legend(borderaxespad=0., ncol=len(gs.getPlayers())+2)
 

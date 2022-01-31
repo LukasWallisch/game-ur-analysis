@@ -14,8 +14,8 @@ class Strategy(object):
         super().__init__()
 
     @classmethod
-    def getStrategyFromName(cls, name:str):
-        if name == "random":
+    def getStrategyFromName(cls, name: str):
+        if name == "random" or name == "Zufall":
             return RandomStrategy()
         elif name == "MoveFirst":
             return MoveFirstStrategy()
@@ -27,17 +27,20 @@ class Strategy(object):
             return ScoreDoubleRollStrategy()
         elif name == "Score_TO":
             return ScoreThrowOpponentStrategy()
-        elif name == "Score_FS":
-            return ScoreSaveFieldStrategy()
+        elif name == "ScoreMF_nF":
+            return ScoreMF_nF()
         else:
-            raise Exception("Unknown Strategy name")
+            raise Exception("Unknown Strategy name: "+name)
 
-    def getName(self) ->str:
+    def getName(self) -> str:
         return self.__name
 
-    def chooseMove(self,player:Player, diceRoll:int, gb:Gameboard)->MoveTuple:
+    def getFigName(self) -> str:
+        return self.__fig_name
+
+    def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         raise NotImplementedError("this is just the interface")
-    
+
     def __repr__(self) -> str:
         return self.getName()
 
@@ -45,25 +48,35 @@ class Strategy(object):
 class RandomStrategy(Strategy):
     def __init__(self) -> None:
         self.__name = "random"
+        self.__fig_name = "Zufall"
         super().__init__()
 
     def getName(self) -> str:
         return self.__name
+
+    def getFigName(self) -> str:
+        return self.__fig_name
+
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
             return random.choice(possibleMoves)
         else:
             return None
-    
+
 
 class MoveFirstStrategy(Strategy):
     def __init__(self) -> None:
         self.__name = "MoveFirst"
+        self.__fig_name = "MoveFirst"
         super().__init__()
 
     def getName(self) -> str:
         return self.__name
+
+    def getFigName(self) -> str:
+        return self.__fig_name
+
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
@@ -76,10 +89,15 @@ class MoveFirstStrategy(Strategy):
 class MoveLastStrategy(Strategy):
     def __init__(self) -> None:
         self.__name = "MoveLast"
+        self.__fig_name = "MoveLast"
         super().__init__()
 
     def getName(self) -> str:
         return self.__name
+
+    def getFigName(self) -> str:
+        return self.__fig_name
+
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
@@ -87,76 +105,99 @@ class MoveLastStrategy(Strategy):
             return possibleMoves[srcFieldsPos.index(np.min(srcFieldsPos))]
         else:
             return None
-    
+
 
 class ScoreStrategy(Strategy):
     def __init__(self) -> None:
         self.__name = "Score_DR+MD"
+        self.__fig_name = "Score DR & MD"
         super().__init__()
 
     def getName(self) -> str:
         return self.__name
+
+    def getFigName(self) -> str:
+        return self.__fig_name
 
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
             scores = [(not m.srcField.getIsSave())*5 +
-                      (m.destField.getIsSave())*10+
-                      (m.destField.getDoubleRoll())*100+
-                      (m.destField.getPosition())-
+                      (m.destField.getIsSave())*10 +
+                      (m.destField.getDoubleRoll())*100 +
+                      (m.destField.getPosition()) -
                       (m.srcField.getPosition())
-                       for m in possibleMoves]
+                      for m in possibleMoves]
             return possibleMoves[scores.index(np.max(scores))]
         else:
             return None
+
+
 class ScoreDoubleRollStrategy(Strategy):
     def __init__(self) -> None:
         self.__name = "Score_DR"
+        self.__fig_name = "Score DR"
         super().__init__()
 
     def getName(self) -> str:
         return self.__name
+
+    def getFigName(self) -> str:
+        return self.__fig_name
 
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
             scores = [(m.destField.getDoubleRoll())*100
-                       for m in possibleMoves]
+                      for m in possibleMoves]
             return possibleMoves[scores.index(np.max(scores))]
         else:
             return None
+
+
 class ScoreThrowOpponentStrategy(Strategy):
     def __init__(self) -> None:
         self.__name = "Score_TO"
+        self.__fig_name = "Score TO"
         super().__init__()
 
     def getName(self) -> str:
         return self.__name
+
+    def getFigName(self) -> str:
+        return self.__fig_name
 
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
             scores = [(m.destField.wouldThrowOpponent(player))*100 +
                       (m.destField.getPosition())
-                       for m in possibleMoves]
+                      for m in possibleMoves]
             return possibleMoves[scores.index(np.max(scores))]
         else:
             return None
 
-class ScoreSaveFieldStrategy(Strategy):
+
+class ScoreMF_nF(Strategy):
     def __init__(self) -> None:
-        self.__name = "Score_FS"
+        self.__name = "ScoreMF_nF"
+        self.__fig_name = "Score MF nF"
         super().__init__()
 
     def getName(self) -> str:
         return self.__name
 
+    def getFigName(self) -> str:
+        return self.__fig_name
+
     def chooseMove(self, player: Player, diceRoll: int, gb: Gameboard) -> MoveTuple:
         possibleMoves = gb.getPossibleMoveTuples(player, diceRoll)
         if len(possibleMoves) > 0:
-            scores = [(m.destField.getIsSave())*100 +
+            scores = [
+                ((not m.srcField.getIsSave())*m.destField.getIsSave())*100 +
+                ((m.srcField.getIsSave())*(not  m.destField.getIsSave()))*(-100) +
                       (m.destField.getPosition())
-                       for m in possibleMoves]
+                      for m in possibleMoves]
             return possibleMoves[scores.index(np.max(scores))]
         else:
             return None
