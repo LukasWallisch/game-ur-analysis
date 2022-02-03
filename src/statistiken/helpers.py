@@ -51,8 +51,8 @@ def makeVlines(
             ax.axvline(a, color=colors[i], ls=ls, alpha=alpha)
 
 
-def setup_grid(ax):
-    majorLocator = mt.MultipleLocator(5)
+def setup_grid(ax, majorMultiple=5):
+    majorLocator = mt.MultipleLocator(majorMultiple)
     minorLocator = mt.MultipleLocator(1)
     ax.xaxis.set_major_locator(majorLocator)
     ax.xaxis.set_minor_locator(minorLocator)
@@ -74,11 +74,9 @@ def make_bestcaseLine(ax, bestcase=-1):
         )
 
 
-def colorboxplot(
-    data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, ncol=2
-) -> List[np.float64]:
+def colorboxplot( data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, ncol=2, majorMultiple=5 ) -> List[np.float64]:
 
-    setup_grid(ax)
+    setup_grid(ax, majorMultiple)
 
     medianprops = dict(linestyle="-.", linewidth=0, color="firebrick")
     bp = ax.boxplot(
@@ -174,8 +172,8 @@ def colorboxplot(
     return medians
 
 
-def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, fill=True, border=True, ncol=2):
-    setup_grid(ax)
+def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, fill=True, border=True, ncol=2, majorMultiple=5):
+    setup_grid(ax, majorMultiple)
     maxBin = max([max(x) for x in data])
     minBin = min([min(x) for x in data])
     bins = range(math.floor(minBin), math.ceil(maxBin) + 2)
