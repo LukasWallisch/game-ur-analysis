@@ -6,6 +6,8 @@ from matplotlib.collections import PathCollection
 import numpy as np
 import matplotlib.patches as mpatches
 import matplotlib.axes as maxes
+import matplotlib.ticker as mt
+import matplotlib.colors as mc
 
 def labelLine(line,align=True,**kwargs):
 
@@ -371,5 +373,13 @@ def draw_path(ax:maxes.Axes,x,y,color):
         ax.arrow(x1, y1, x2, y2, head_width=HEAD_WIDTH, head_length=HEAD_LEN,length_includes_head=True, color=color, ec="#00000055",zorder=5)
 
 
+def setup_grid(ax, majorMultiple=5, gridoff=False):
+    majorLocator = mt.MultipleLocator(majorMultiple)
+    minorLocator = mt.MultipleLocator(1)
+    ax.xaxis.set_major_locator(majorLocator)
+    ax.xaxis.set_minor_locator(minorLocator)
+    if not gridoff:
+        ax.grid(b=True, axis="x", which='major', color='grey', alpha=.5, linestyle='-')
+        ax.grid(b=True, axis="x", which='minor', color='grey', alpha=.3, linestyle='--')
 
     
