@@ -20,8 +20,7 @@ from src.codeGameSimulation.GameSettings import GameSettings
 import gameBoardDisplay as gbd
 
 
-colors = ["crimson", "blue", "green", "red", "orange", "purple",
-          "gold", "lime", "magenta",  "cyan"]
+colors = ["crimson", "blue", "green", "orange", "red", "purple", "gold", "lime", "magenta",  "cyan"]
 cmap = LinearSegmentedColormap.from_list("mycmap", colors)
 
 
@@ -51,9 +50,9 @@ def makeVlines(
             ax.axvline(a, color=colors[i], ls=ls, alpha=alpha)
 
 
-def setup_grid(ax, majorMultiple=5):
+def setup_grid(ax, majorMultiple=5, minorMultiple=1):
     majorLocator = mt.MultipleLocator(majorMultiple)
-    minorLocator = mt.MultipleLocator(1)
+    minorLocator = mt.MultipleLocator(minorMultiple)
     ax.xaxis.set_major_locator(majorLocator)
     ax.xaxis.set_minor_locator(minorLocator)
     ax.grid(b=True, axis="x", which='major', color='grey', alpha=.5, linestyle='-')
@@ -74,14 +73,12 @@ def make_bestcaseLine(ax, bestcase=-1):
         )
 
 
-def colorboxplot( data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, ncol=2, majorMultiple=5 ) -> List[np.float64]:
+def colorboxplot(data: List, ax: axes.Axes, labels: List[str], colors: List[str], widths=0.5, bestcase=-1, ncol=2, majorMultiple=5, minorMultiple=1) -> List[np.float64]:
 
-    setup_grid(ax, majorMultiple)
+    setup_grid(ax, majorMultiple, minorMultiple)
 
     medianprops = dict(linestyle="-.", linewidth=0, color="firebrick")
-    bp = ax.boxplot(
-        data, 0, "|", False, labels=labels, medianprops=medianprops, autorange=True,  whis=(1, 99)
-    )
+    bp = ax.boxplot( data, 0, "|", False, labels=labels, medianprops=medianprops, autorange=True,  whis=(1, 99), widths=widths    )
     num_boxes = len(data)
     medians = np.empty(num_boxes)
     minimums = np.empty(num_boxes)
@@ -172,8 +169,8 @@ def colorboxplot( data: List, ax: axes.Axes, labels: List[str], colors: List[str
     return medians
 
 
-def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, fill=True, border=True, ncol=2, majorMultiple=5):
-    setup_grid(ax, majorMultiple)
+def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str], bestcase=-1, fill=True, border=True, ncol=2, majorMultiple=5, minorMultiple=1, hideLegend=False):
+    setup_grid(ax, majorMultiple, minorMultiple)
     maxBin = max([max(x) for x in data])
     minBin = min([min(x) for x in data])
     bins = range(math.floor(minBin), math.ceil(maxBin) + 2)
@@ -195,35 +192,37 @@ def makeHistogram(data: List, ax: axes.Axes, labels: List[str], colors: List[str
     #               color="lightgrey", alpha=0.5)
     make_bestcaseLine(ax, bestcase)
     ax.yaxis.set_major_formatter(mt.PercentFormatter())
-    ax.legend(ncol=ncol)
+    if not hideLegend:
+        ax.legend(ncol=ncol)
 
 
-def zeichneErrechnetenWert(ax: axes.Axes, rs: Literal["r", "s"], multiplikator: int = 1, exactFinish=True):
+def zeichneErrechnetenWert(ax: axes.Axes, rs: Literal["r", "s"], multiplikator: int = 1, exactFinish=True, noText=False):
     if exactFinish:
         if rs == "r":
             val = 8.391927856222578
             xlabel = "errechnete Werte für die Spiellänge in Runden"
         elif rs == "s":
             val = 9.867846767445288
-            xlabel = "errechnete Werte für die Spiellänge in Schritten"
+            xlabel = "errechnete Werte für die Spiellänge in Zügen"
         else:
             raise Exception("unbekannter Wert für rs")
     else:
         if rs == "s":
             val = 7.874997997960489
-            xlabel = "errechnete Werte für die Spiellänge in Schritten (Ziel muss nicht exakt getroffen werden)"
+            xlabel = "errechnete Werte für die Spiellänge in Zügen (Ziel muss nicht exakt getroffen werden)"
         else:
             raise Exception("unbekannter Wert für rs")
     xticks_val = [val*multiplikator]
     print(multiplikator)
-    if multiplikator != 1:
-        xticks_label = ["⌀ Länge x {}".format(multiplikator)]
-    else:
-        xticks_label = ["⌀ Länge"]
-    sec_ax = ax.secondary_xaxis("top")
-    sec_ax.set_xticks(xticks_val, xticks_label)
-    sec_ax.set_xlabel(xlabel)
-    sec_ax.set_color("blue")
+    if not noText:
+        if multiplikator != 1:
+            xticks_label = ["⌀ Länge x {}".format(multiplikator)]
+        else:
+            xticks_label = ["⌀ Länge"]
+        sec_ax = ax.secondary_xaxis("top")
+        sec_ax.set_xticks(xticks_val, xticks_label)
+        sec_ax.set_xlabel(xlabel)
+        sec_ax.set_color("blue")
     ax.axvline(val*multiplikator, color="grey", ls=":")
 
 
@@ -281,7 +280,8 @@ def drawGame(db_row: sqlite3.Row, gs: GameSettings, figsize=[18, 8], prefix_grap
 
     ax_game: axes.Axes = ax_dict["game"]
     gbd.makeGameboardDisplay(ax_game, *list(gs.getFieldsSettings().values()), xoff=1.5, show_hspans=False)
-    ax_game.set_yticks(range(0, 16), ["start"]+list(range(1, 15))+["end"])
+    # ax_game.set_yticks(range(0, 16), ["start"]+list(range(1, 15))+["end"])
+    ax_game.set_yticks(range(0, 16), list(range(0, 16)))
     ax_game.set_ybound(-.6, 17)
     ax_game.set_ylim(-.6, 17)
     ax_game.grid("y")
